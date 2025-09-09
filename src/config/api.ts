@@ -1,7 +1,5 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://profile-1g5.onrender.com' 
-  : 'http://localhost:5000';
+const API_BASE_URL = 'https://profile-1g5.onrender.com';
 
 export const API_ENDPOINTS = {
   CONTACT: `${API_BASE_URL}/api/contact`,

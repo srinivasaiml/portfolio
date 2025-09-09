@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Github, Linkedin, Mail, Phone, MapPin, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/api';
 
 const Contact = () => {
@@ -13,6 +13,7 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitStatus, setSubmitStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -107,22 +108,54 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
+    setErrorMessage('');
+
+    // Basic validation
+    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
+      setSubmitStatus('error');
+      setErrorMessage('Please fill in all fields.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setSubmitStatus('error');
+      setErrorMessage('Please enter a valid email address.');
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
+      console.log('Sending request to:', API_ENDPOINTS.CONTACT);
+      console.log('Form data:', {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message
+      });
+
       const response = await fetch(API_ENDPOINTS.CONTACT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        mode: 'cors',
         body: JSON.stringify({
-          name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim()
         }),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       const data = await response.json();
+      console.log('Response data:', data);
       
       if (response.ok && data.success) {
         setSubmitStatus('success');
@@ -133,17 +166,22 @@ const Contact = () => {
           subject: '',
           message: ''
         });
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => setSubmitStatus('idle'), 5000);
       } else {
         console.error('Server error:', data);
         setSubmitStatus('error');
+        setErrorMessage(data.message || 'Failed to send message. Please try again.');
       }
     } catch (error) {
       console.error('Network error:', error);
       setSubmitStatus('error');
+      setErrorMessage('Network error. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
+
   const socialLinks = [
     {
       icon: <Github className="w-6 h-6" />,
@@ -232,14 +270,19 @@ const Contact = () => {
             className="bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white/30"
           >
             <h3 className="text-2xl font-bold text-gray-800 mb-6">Send a Message</h3>
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               {submitStatus === 'success' && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg"
+                  className="p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg flex items-center"
                 >
-                  Thank you! Your message has been sent successfully.
+                  <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
+                  <div>
+                    <p className="font-semibold">Message sent successfully!</p>
+                    <p className="text-sm">Thank you for contacting me. I'll get back to you soon.</p>
+                  </div>
                 </motion.div>
               )}
               
@@ -247,16 +290,20 @@ const Contact = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+                  className="p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg flex items-center"
                 >
-                  Sorry, there was an error sending your message. Please try again.
+                  <AlertCircle className="w-5 h-5 mr-2 text-red-600" />
+                  <div>
+                    <p className="font-semibold">Error sending message</p>
+                    <p className="text-sm">{errorMessage || 'Please try again later.'}</p>
+                  </div>
                 </motion.div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    First Name
+                    First Name *
                   </label>
                   <input
                     name="firstName"
@@ -264,13 +311,13 @@ const Contact = () => {
                     onChange={handleInputChange}
                     type="text"
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/70 backdrop-blur-sm"
                     placeholder="Your first name"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Last Name
+                    Last Name *
                   </label>
                   <input
                     name="lastName"
@@ -278,7 +325,7 @@ const Contact = () => {
                     onChange={handleInputChange}
                     type="text"
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/70 backdrop-blur-sm"
                     placeholder="Your last name"
                   />
                 </div>
@@ -286,7 +333,7 @@ const Contact = () => {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
+                  Email Address *
                 </label>
                 <input
                   name="email"
@@ -294,14 +341,14 @@ const Contact = () => {
                   onChange={handleInputChange}
                   type="email"
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/70 backdrop-blur-sm"
                   placeholder="your.email@example.com"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject
+                  Subject *
                 </label>
                 <input
                   name="subject"
@@ -309,14 +356,14 @@ const Contact = () => {
                   onChange={handleInputChange}
                   type="text"
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/70 backdrop-blur-sm"
                   placeholder="What's this about?"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message
+                  Message *
                 </label>
                 <textarea
                   name="message"
@@ -324,7 +371,7 @@ const Contact = () => {
                   onChange={handleInputChange}
                   rows={6}
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/70 backdrop-blur-sm resize-none"
                   placeholder="Your message here..."
                 ></textarea>
               </div>
@@ -334,12 +381,22 @@ const Contact = () => {
                 whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                className={`w-full px-8 py-4 rounded-lg font-semibold shadow-lg transition-all duration-300 flex items-center justify-center ${
+                  isSubmitting
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-xl text-white'
+                }`}
               >
                 {isSubmitting ? (
-                  <>Sending...</>
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Sending...
+                  </>
                 ) : (
-                  <>Send Message <Send className="ml-2 w-5 h-5" /></>
+                  <>
+                    Send Message 
+                    <Send className="ml-2 w-5 h-5" />
+                  </>
                 )}
               </motion.button>
             </form>
@@ -400,6 +457,28 @@ const Contact = () => {
                   </motion.a>
                 ))}
               </div>
+            </div>
+
+            {/* API Status Check */}
+            <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-2xl border border-white/30">
+              <h4 className="text-lg font-semibold text-gray-800 mb-3">API Status</h4>
+              <p className="text-sm text-gray-600">
+                Backend URL: <code className="bg-gray-100 px-2 py-1 rounded text-xs">{API_ENDPOINTS.CONTACT}</code>
+              </p>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch(API_ENDPOINTS.HEALTH);
+                    const data = await response.json();
+                    alert(`API Status: ${data.status || 'Unknown'}`);
+                  } catch (error) {
+                    alert('API is not reachable');
+                  }
+                }}
+                className="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+              >
+                Test API Connection
+              </button>
             </div>
           </motion.div>
         </div>
