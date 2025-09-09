@@ -1,8 +1,19 @@
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, Phone, MapPin, Send } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/api';
 
 const Contact = () => {
+  const [formData, setFormData] = React.useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitStatus, setSubmitStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -84,6 +95,55 @@ const Contact = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      const response = await fetch(API_ENDPOINTS.CONTACT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        setSubmitStatus('success');
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        console.error('Server error:', data);
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   const socialLinks = [
     {
       icon: <Github className="w-6 h-6" />,
@@ -172,14 +232,38 @@ const Contact = () => {
             className="bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white/30"
           >
             <h3 className="text-2xl font-bold text-gray-800 mb-6">Send a Message</h3>
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {submitStatus === 'success' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg"
+                >
+                  Thank you! Your message has been sent successfully.
+                </motion.div>
+              )}
+              
+              {submitStatus === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+                >
+                  Sorry, there was an error sending your message. Please try again.
+                </motion.div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     First Name
                   </label>
                   <input
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
                     type="text"
+                    required
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
                     placeholder="Your first name"
                   />
@@ -189,7 +273,11 @@ const Contact = () => {
                     Last Name
                   </label>
                   <input
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
                     type="text"
+                    required
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
                     placeholder="Your last name"
                   />
@@ -201,7 +289,11 @@ const Contact = () => {
                   Email
                 </label>
                 <input
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   type="email"
+                  required
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="your.email@example.com"
                 />
@@ -212,7 +304,11 @@ const Contact = () => {
                   Subject
                 </label>
                 <input
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
                   type="text"
+                  required
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="What's this about?"
                 />
@@ -223,7 +319,11 @@ const Contact = () => {
                   Message
                 </label>
                 <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
                   rows={6}
+                  required
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Your message here..."
                 ></textarea>
@@ -233,10 +333,14 @@ const Contact = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
               >
-                Send Message
-                <Send className="ml-2 w-5 h-5" />
+                {isSubmitting ? (
+                  <>Sending...</>
+                ) : (
+                  <>Send Message <Send className="ml-2 w-5 h-5" /></>
+                )}
               </motion.button>
             </form>
           </motion.div>
