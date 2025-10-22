@@ -48,36 +48,47 @@ const Hero = () => {
     let time = 0;
 
     const animate = () => {
+      // 1. Clear the canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.01;
 
+      // Outer loop: Iterate through all particles to update position and draw
       particles.forEach((particle, index) => {
+        // Update position
         particle.x += particle.vx + Math.sin(time + index * 0.01) * 0.2;
         particle.y += particle.vy + Math.cos(time + index * 0.01) * 0.2;
 
+        // Bounce off walls
         if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
         if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
 
         // Draw particle with glow effect
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = particle.color;
-        ctx.fill();
-
-        // Add glow
+        
+        // Apply glow settings first
         ctx.shadowColor = particle.color;
         ctx.shadowBlur = 10;
+        
+        // Fill the particle
+        ctx.fillStyle = particle.color;
         ctx.fill();
+        
+        // Reset shadow/glow after drawing the particle
         ctx.shadowBlur = 0;
+        ctx.shadowColor = 'transparent'; // Optional: ensures no other elements are affected
 
-        // Connect nearby particles
-        particles.forEach((otherParticle, otherIndex) => {
-          if (index === otherIndex) return;
+        // Connect nearby particles (Optimized inner loop)
+        // Start from index + 1 to prevent double-checking (A->B and B->A)
+        for (let otherIndex = index + 1; otherIndex < particles.length; otherIndex++) {
+          const otherParticle = particles[otherIndex];
+          
           const dx = particle.x - otherParticle.x;
           const dy = particle.y - otherParticle.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 100) {
+          if (distance < 100) { // Keep connection radius at 100 (or reduce for further gains)
+            // Draw connection line
             ctx.beginPath();
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(otherParticle.x, otherParticle.y);
@@ -85,13 +96,12 @@ const Hero = () => {
             ctx.lineWidth = 1;
             ctx.stroke();
           }
-        });
+        }
       });
 
+      // Request the next frame
       requestAnimationFrame(animate);
     };
-
-    animate();
 
     const handleResize = () => {
       canvas.width = window.innerWidth;
