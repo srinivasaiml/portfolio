@@ -13,7 +13,7 @@ import Experience from '../components/Experience';
 import Education from '../components/Education';
 import Certificates from '../components/Certificates';
 import Contact from '../components/Contact';
-import BackgroundAnimation from '../components/BackgroundAnimation';
+
 
 function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +48,7 @@ function HomePage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100"
           >
-            <BackgroundAnimation />
+   
             <FloatingElements />
             <ScrollProgress />
             <div className="relative z-10">

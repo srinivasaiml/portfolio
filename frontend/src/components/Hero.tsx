@@ -269,24 +269,7 @@ const Hero = () => {
         </motion.div>
       </div>
 
-      <motion.div
-        animate={{ 
-          y: [0, 15, 0],
-          opacity: [0.5, 1, 0.5]
-        }}
-        transition={{ 
-          duration: 2, 
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
-        onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-      >
-        <div className="flex flex-col items-center space-y-2">
-          <span className="text-sm text-gray-500 font-medium">Scroll Down</span>
-          <ChevronDown className="text-blue-600 w-8 h-8" />
-        </div>
-      </motion.div>
+   
     </section>
   );
 };

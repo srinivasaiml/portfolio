@@ -82,6 +82,8 @@ portfolio/
 2. **Install dependencies:**
    ```bash
    npm install
+
+   npm install nodemailer
    ```
 
 3. **Environment Configuration:**
