@@ -13,6 +13,7 @@ import Experience from '../components/Experience';
 import Education from '../components/Education';
 import Certificates from '../components/Certificates';
 import Contact from '../components/Contact';
+import BackgroundAnimation from '../components/BackgroundAnimation';
 
 
 function HomePage() {
@@ -53,7 +54,9 @@ function HomePage() {
             <ScrollProgress />
             <div className="relative z-10">
               <Navbar />
+              <BackgroundAnimation/>
               <Hero />
+
               <About />
               <Skills />
               <Projects />

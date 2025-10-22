@@ -12,6 +12,7 @@ const Hero = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Initial canvas setup
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -32,8 +33,8 @@ const Hero = () => {
       'rgba(34, 197, 94, 0.6)',
     ];
 
-    // Create floating particles
-    for (let i = 0; i < 150; i++) {
+    // OPTIMIZATION 1: Reduced particle count from 150 to 75
+    for (let i = 0; i < 75; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -48,11 +49,9 @@ const Hero = () => {
     let time = 0;
 
     const animate = () => {
-      // 1. Clear the canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.01;
 
-      // Outer loop: Iterate through all particles to update position and draw
       particles.forEach((particle, index) => {
         // Update position
         particle.x += particle.vx + Math.sin(time + index * 0.01) * 0.2;
@@ -66,20 +65,19 @@ const Hero = () => {
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         
-        // Apply glow settings first
+        // Apply glow settings
         ctx.shadowColor = particle.color;
         ctx.shadowBlur = 10;
         
-        // Fill the particle
         ctx.fillStyle = particle.color;
         ctx.fill();
-        
+
         // Reset shadow/glow after drawing the particle
         ctx.shadowBlur = 0;
-        ctx.shadowColor = 'transparent'; // Optional: ensures no other elements are affected
+        ctx.shadowColor = 'transparent'; // Ensure glow is contained to the particle
 
-        // Connect nearby particles (Optimized inner loop)
-        // Start from index + 1 to prevent double-checking (A->B and B->A)
+        // Connect nearby particles
+        // OPTIMIZATION 2: Standard for loop starting at index + 1 to halve checks
         for (let otherIndex = index + 1; otherIndex < particles.length; otherIndex++) {
           const otherParticle = particles[otherIndex];
           
@@ -87,8 +85,7 @@ const Hero = () => {
           const dy = particle.y - otherParticle.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 100) { // Keep connection radius at 100 (or reduce for further gains)
-            // Draw connection line
+          if (distance < 100) {
             ctx.beginPath();
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(otherParticle.x, otherParticle.y);
@@ -99,9 +96,10 @@ const Hero = () => {
         }
       });
 
-      // Request the next frame
       requestAnimationFrame(animate);
     };
+
+    animate();
 
     const handleResize = () => {
       canvas.width = window.innerWidth;
@@ -279,7 +277,24 @@ const Hero = () => {
         </motion.div>
       </div>
 
-   
+      <motion.div
+        animate={{ 
+          y: [0, 15, 0],
+          opacity: [0.5, 1, 0.5]
+        }}
+        transition={{ 
+          duration: 2, 
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
+        onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+      >
+        <div className="flex flex-col items-center space-y-2">
+          <span className="text-sm text-gray-500 font-medium">Scroll Down</span>
+          <ChevronDown className="text-blue-600 w-8 h-8" />
+        </div>
+      </motion.div>
     </section>
   );
 };
