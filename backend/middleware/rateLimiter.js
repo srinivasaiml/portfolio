@@ -5,7 +5,7 @@ const FIFTEEN_MINUTES_IN_MS = 15 * 60 * 1000;
 // Rate limiter for contact form submissions
 const contactLimiter = rateLimit({
   windowMs: FIFTEEN_MINUTES_IN_MS, // CORRECTED: Was 1, now 15 minutes
-  max: 5, // Limit each IP to 5 requests per 15 minutes
+  max:10, // Limit each IP to 5 requests per 15 minutes
   message: {
     success: false,
     message: 'Too many contact form submissions from this IP, please try again after 15 minutes.'

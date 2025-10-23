@@ -38,7 +38,7 @@ function HomePage() {
 
   return (
     <div className="relative min-h-screen">
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         {isLoading && <PreLoader onComplete={handlePreloadComplete} />}
       </AnimatePresence>
       <AnimatePresence>

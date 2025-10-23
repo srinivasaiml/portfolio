@@ -6,12 +6,12 @@ const Education = () => {
 
   const educationData = [
     {
-      degree: 'B.E in Artificial Intelligence & Meachine Learning',
+      degree: 'B.E in Artificial Intelligence & Machine Learning',
       institution: 'Aditya Engineering College',
       period: '2022-2026',
       grade: 'CGPA: 8.0',
       status: 'Current',
-      description: 'Pursuing Bachelor of Engineering in Artificial Intelligence & Meachine Learning with focus on software development, algorithms, and modern programming paradigms.',
+      description: 'Pursuing Bachelor of Engineering in Artificial Intelligence & Machine Learning with focus on software development, algorithms, and modern programming paradigms.',
       highlights: ['Software Development', 'Data Structures', 'Web Technologies', 'AI & ML'],
       icon: <GraduationCap className="w-6 h-6" />,
       color: 'from-blue-500 via-indigo-500 to-purple-600',
@@ -20,7 +20,7 @@ const Education = () => {
     {
       degree: 'Class 12th',
       institution: 'State Board',
-      period: '2021-2022',
+      period: '2020-2022',
       grade: 'Score: 899/1000',
       percentage: '89.9%',
       status: 'Completed',

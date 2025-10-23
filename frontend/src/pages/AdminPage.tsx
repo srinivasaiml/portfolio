@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, Eye, Mail, BarChart2, Loader, LogIn, LogOut, 
-  AlertTriangle, Inbox 
+  AlertTriangle, Inbox, Trash2 // <-- Import Trash2 icon
 } from 'lucide-react';
 
 // Define types for our data
@@ -28,6 +28,7 @@ const AdminPage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null); // State for tracking the message currently being deleted
 
   // Check session storage on load to stay logged in
   useEffect(() => {
@@ -61,39 +62,89 @@ const AdminPage = () => {
     setError('');
   };
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+  const getHeaders = (key: string) => ({
+    'Content-Type': 'application/json',
+    'x-admin-secret-key': key || '',
+  });
+
   const fetchDashboardData = async () => {
     setLoading(true);
     setError('');
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     if (!API_BASE_URL) {
       setError("Configuration Error: VITE_API_BASE_URL is not set.");
       setLoading(false);
       return;
     }
     const storedKey = sessionStorage.getItem('admin-secret-key');
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-admin-secret-key': storedKey || '',
-    };
+    const headers = getHeaders(storedKey || '');
+
     try {
       const [statsRes, messagesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/admin/stats`, { headers }),
-        fetch(`${API_BASE_URL}/api/admin/messages`, { headers }),
+        fetch(`${API_BASE_URL}/api/contact/stats`, { headers }), // <-- Changed to /api/contact/stats as per your backend
+        fetch(`${API_BASE_URL}/api/contact`, { headers }), // <-- Changed to /api/contact as per your backend
       ]);
       if (!statsRes.ok) throw new Error(`Failed to fetch stats: Server responded with status ${statsRes.status}`);
       if (!messagesRes.ok) throw new Error(`Failed to fetch messages: Server responded with status ${messagesRes.status}`);
-      const statsData = await statsRes.json();
-      const messagesData = await messagesRes.json();
-      setStats(statsData.data);
-      setMessages(messagesData.data);
+      
+      const statsJson = await statsRes.json();
+      const messagesJson = await messagesRes.json();
+
+      // IMPORTANT: Your backend provides stats under /api/contact/stats and messages under /api/contact
+      setStats(statsJson.data.byStatus); // Assuming stats are structured like { total: X, today: Y, byStatus: { new: Z } }
+      setMessages(messagesJson.data); // Messages are an array inside the data property
+      
     } catch (err: any) {
-      setError(err.message);
+      console.error("Dashboard Data Fetch Error:", err);
+      setError("Failed to load dashboard data. Access denied or server error.");
       handleLogout(); // Log out on error
     } finally {
       setLoading(false);
     }
   };
-  
+
+  // --- NEW FUNCTION: DELETE CONTACT MESSAGE ---
+  const handleDeleteMessage = async (id: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this message?")) {
+      return;
+    }
+
+    setDeletingId(id);
+    setError('');
+
+    const storedKey = sessionStorage.getItem('admin-secret-key');
+    if (!storedKey) {
+      setError("Not authenticated for delete operation.");
+      setDeletingId(null);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/contact/${id}`, {
+        method: 'DELETE',
+        headers: getHeaders(storedKey),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete message: Server responded with status ${response.status}`);
+      }
+
+      // Update the UI: Remove the deleted message from the local state
+      setMessages(prev => prev.filter(msg => msg._id !== id));
+      
+      // Optionally, refetch stats to update total message count
+      fetchDashboardData(); 
+
+    } catch (err: any) {
+      console.error("Delete Error:", err);
+      setError(`Deletion failed: ${err.message}`);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+  // ------------------------------------------
+
   // Animation Variants for Framer Motion
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -109,6 +160,7 @@ const AdminPage = () => {
   };
 
   if (!isAuthenticated) {
+    // ... (Authentication form remains the same)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-100 to-blue-100">
         <AnimatePresence>
@@ -195,7 +247,9 @@ const AdminPage = () => {
               </div>
               <div>
                 <p className="text-base text-gray-500">Total Unique Visits</p>
-                <p className="text-4xl font-bold text-gray-800">{stats.totalVisits}</p>
+                {/* Note: stats.totalVisits is not available in your /api/contact/stats. 
+                   You might need to adjust this to show another stat like total new messages */}
+                <p className="text-4xl font-bold text-gray-800">{stats.new || 'N/A'}</p> 
               </div>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center space-x-6 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
@@ -204,7 +258,10 @@ const AdminPage = () => {
               </div>
               <div>
                 <p className="text-base text-gray-500">Total Form Submissions</p>
-                <p className="text-4xl font-bold text-gray-800">{stats.totalMessages}</p>
+                {/* Assuming total is the sum of all status types */}
+                <p className="text-4xl font-bold text-gray-800">
+                  {Object.values(stats).reduce((acc: number, count: any) => acc + count, 0)}
+                </p>
               </div>
             </div>
           </motion.div>
@@ -226,6 +283,7 @@ const AdminPage = () => {
                   <th className="p-4 font-semibold text-gray-600">Email</th>
                   <th className="p-4 font-semibold text-gray-600">Subject</th>
                   <th className="p-4 font-semibold text-gray-600">Message</th>
+                  <th className="p-4 font-semibold text-gray-600">Actions</th> {/* <-- New Column */}
                 </tr>
               </thead>
               <tbody>
@@ -242,6 +300,28 @@ const AdminPage = () => {
                     <td className="p-4 text-blue-600 hover:underline"><a href={`mailto:${msg.email}`}>{msg.email}</a></td>
                     <td className="p-4 text-gray-700">{msg.subject}</td>
                     <td className="p-4 text-sm text-gray-700 max-w-xs truncate" title={msg.message}>{msg.message}</td>
+                    <td className="p-4">
+                      {/* --- NEW DELETE BUTTON --- */}
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleDeleteMessage(msg._id)}
+                        disabled={deletingId === msg._id}
+                        className={`p-2 rounded-full transition-colors ${
+                          deletingId === msg._id 
+                            ? 'bg-gray-300 text-gray-600 cursor-not-allowed' 
+                            : 'bg-red-100 text-red-600 hover:bg-red-500 hover:text-white'
+                        }`}
+                        title="Delete Message"
+                      >
+                        {deletingId === msg._id ? (
+                          <Loader className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-5 h-5" />
+                        )}
+                      </motion.button>
+                      {/* ------------------------- */}
+                    </td>
                   </motion.tr>
                 ))}
               </tbody>

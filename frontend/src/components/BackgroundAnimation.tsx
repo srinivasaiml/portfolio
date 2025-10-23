@@ -13,39 +13,25 @@ const BackgroundAnimation = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const particles: Array<{
-      x: number;
+    const lines: Array<{
       y: number;
-      z: number;
-      vx: number;
-      vy: number;
-      vz: number;
-      size: number;
+      baseY: number;
+      speed: number;
+      amplitude: number;
+      frequency: number;
       opacity: number;
-      color: string;
     }> = [];
 
-    const colors = [
-      'rgba(59, 130, 246, 0.4)',    // Blue
-      'rgba(147, 51, 234, 0.4)',    // Purple
-      'rgba(236, 72, 153, 0.4)',    // Pink
-      'rgba(34, 197, 94, 0.4)',     // Green
-      'rgba(249, 115, 22, 0.4)',    // Orange
-    ];
-
-    // Reduced particle count for better performance
-    const particleCount = 100;
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        z: Math.random() * 1000,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
-        vz: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 3 + 1,
-        opacity: Math.random() * 0.5 + 0.1,
-        color: colors[Math.floor(Math.random() * colors.length)]
+    // Create flowing lines
+    const lineCount = 8;
+    for (let i = 0; i < lineCount; i++) {
+      lines.push({
+        y: (canvas.height / (lineCount + 1)) * (i + 1),
+        baseY: (canvas.height / (lineCount + 1)) * (i + 1),
+        speed: 0.001 + Math.random() * 0.002,
+        amplitude: 30 + Math.random() * 20,
+        frequency: 0.002 + Math.random() * 0.003,
+        opacity: 0.03 + Math.random() * 0.05,
       });
     }
 
@@ -53,66 +39,47 @@ const BackgroundAnimation = () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.01;
+      time += 1;
 
-      particles.forEach((particle, index) => {
-        // Update particle position with 3D movement
-        particle.x += particle.vx + Math.sin(time + index * 0.01) * 0.1;
-        particle.y += particle.vy + Math.cos(time + index * 0.01) * 0.1;
-        particle.z += particle.vz;
-
-        // Wrap around screen
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
-        if (particle.z < 0) particle.z = 1000;
-        if (particle.z > 1000) particle.z = 0;
-
-        // Calculate 3D perspective
-        const scale = 1000 / (1000 + particle.z);
-        const x = particle.x * scale;
-        const y = particle.y * scale;
-        const size = particle.size * scale;
-        const opacity = particle.opacity * scale;
-
-        // Draw particle
+      lines.forEach((line, index) => {
         ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        // A more direct way to set opacity
-        ctx.globalAlpha = opacity;
-        ctx.fillStyle = particle.color;
-        ctx.fill();
-        ctx.globalAlpha = 1; // Reset global alpha
+        ctx.moveTo(0, line.y);
 
-        // --- OPTIMIZED CONNECTION LOGIC ---
-        const connectRange = 10; // Only check the next 10 particles
-        for (let j = index + 1; j < index + connectRange && j < particles.length; j++) {
-          const otherParticle = particles[j];
-
-          const otherScale = 1000 / (1000 + otherParticle.z);
-          const otherX = otherParticle.x * otherScale;
-          const otherY = otherParticle.y * otherScale;
-
-          const dx = x - otherX;
-          const dy = y - otherY;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 80) {
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(otherX, otherY);
-            ctx.strokeStyle = 'rgba(59, 130, 246, 1)';
-            // Set opacity based on distance
-            ctx.globalAlpha = 0.1 * (1 - distance / 80) * scale;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
+        for (let x = 0; x <= canvas.width; x += 5) {
+          const wave = Math.sin(x * line.frequency + time * line.speed) * line.amplitude;
+          const y = line.baseY + wave;
+          ctx.lineTo(x, y);
         }
-        ctx.globalAlpha = 1; // Reset global alpha after drawing lines
+
+        ctx.strokeStyle = `rgba(100, 116, 139, ${line.opacity})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Add subtle gradient fill
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        ctx.closePath();
+        
+        const gradient = ctx.createLinearGradient(0, line.baseY, 0, canvas.height);
+        gradient.addColorStop(0, `rgba(148, 163, 184, ${line.opacity * 0.3})`);
+        gradient.addColorStop(1, 'rgba(148, 163, 184, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fill();
       });
 
-      // (The floating geometric shapes code remains the same)
+      // Draw subtle geometric accent
+      ctx.save();
+      ctx.translate(canvas.width * 0.85, canvas.height * 0.15);
+      ctx.rotate(time * 0.001);
+      
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.08)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(-50, -50, 100, 100);
+      
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.05)';
+      ctx.strokeRect(-70, -70, 140, 140);
+      
+      ctx.restore();
 
       requestAnimationFrame(animate);
     };
@@ -122,6 +89,12 @@ const BackgroundAnimation = () => {
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      
+      // Update line positions on resize
+      lines.forEach((line, i) => {
+        line.baseY = (canvas.height / (lineCount + 1)) * (i + 1);
+        line.y = line.baseY;
+      });
     };
 
     window.addEventListener('resize', handleResize);
@@ -132,7 +105,6 @@ const BackgroundAnimation = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
     />
   );
 };

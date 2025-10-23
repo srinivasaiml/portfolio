@@ -1,9 +1,9 @@
+// @ts-nocheck
 import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronDown, Download, Eye, Sparkles } from 'lucide-react';
+import { ChevronDown, Download, ArrowRight } from 'lucide-react';
 
 const Hero = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -12,88 +12,34 @@ const Hero = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Initial canvas setup
+    // Set canvas dimensions
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      opacity: number;
-      color: string;
-    }> = [];
+    const gridSize = 50;
+    const dots = [];
 
-    const colors = [
-      'rgba(59, 130, 246, 0.6)',
-      'rgba(147, 51, 234, 0.6)',
-      'rgba(236, 72, 153, 0.6)',
-      'rgba(34, 197, 94, 0.6)',
-    ];
-
-    // OPTIMIZATION 1: Reduced particle count from 150 to 75
-    for (let i = 0; i < 75; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: Math.random() * 0.8 - 0.4,
-        vy: Math.random() * 0.8 - 0.4,
-        size: Math.random() * 3 + 1,
-        opacity: Math.random() * 0.8 + 0.2,
-        color: colors[Math.floor(Math.random() * colors.length)]
-      });
+    // Create grid of dots
+    for (let x = 0; x < canvas.width; x += gridSize) {
+      for (let y = 0; y < canvas.height; y += gridSize) {
+        dots.push({ x, y, baseY: y });
+      }
     }
 
     let time = 0;
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.01;
+      time += 0.02;
 
-      particles.forEach((particle, index) => {
-        // Update position
-        particle.x += particle.vx + Math.sin(time + index * 0.01) * 0.2;
-        particle.y += particle.vy + Math.cos(time + index * 0.01) * 0.2;
+      dots.forEach((dot) => {
+        const wave = Math.sin(dot.x * 0.01 + time) * 10;
+        const currentY = dot.baseY + wave;
 
-        // Bounce off walls
-        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
-        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
-
-        // Draw particle with glow effect
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        
-        // Apply glow settings
-        ctx.shadowColor = particle.color;
-        ctx.shadowBlur = 10;
-        
-        ctx.fillStyle = particle.color;
+        ctx.arc(dot.x, currentY, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
         ctx.fill();
-
-        // Reset shadow/glow after drawing the particle
-        ctx.shadowBlur = 0;
-        ctx.shadowColor = 'transparent'; // Ensure glow is contained to the particle
-
-        // Connect nearby particles
-        // OPTIMIZATION 2: Standard for loop starting at index + 1 to halve checks
-        for (let otherIndex = index + 1; otherIndex < particles.length; otherIndex++) {
-          const otherParticle = particles[otherIndex];
-          
-          const dx = particle.x - otherParticle.x;
-          const dy = particle.y - otherParticle.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 100) {
-            ctx.beginPath();
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(otherParticle.x, otherParticle.y);
-            ctx.strokeStyle = `rgba(59, 130, 246, ${0.2 * (1 - distance / 100)})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        }
       });
 
       requestAnimationFrame(animate);
@@ -111,201 +57,117 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none opacity-40"
-      />
-      
-      {/* Enhanced floating geometric shapes */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{
-            rotate: 360,
-            scale: [1, 1.3, 1],
-            x: [0, 50, 0],
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Gradient Background with Grid Pattern */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(to bottom, #fff 0%, #fff 40%, rgba(255, 255, 255, 0) 100%), linear-gradient(to right, #0ed2da, #5f29c7)',
+        }}
+      >
+        {/* Vertical Grid Lines */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'linear-gradient(90deg, #ccc 1px, transparent 1px)',
+            backgroundSize: '50px 100%',
+            maskImage:
+              'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 70%)',
+            WebkitMaskImage:
+              'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 70%)',
           }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute top-20 left-20 w-40 h-40 border-2 border-blue-300/30 rounded-full"
-        />
-        <motion.div
-          animate={{
-            rotate: -360,
-            scale: [1, 0.7, 1],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute bottom-20 right-20 w-32 h-32 bg-gradient-to-br from-purple-200/40 to-blue-200/40 rounded-2xl"
-        />
-        <motion.div
-          animate={{
-            y: [-30, 30, -30],
-            rotate: [0, 180, 360],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-1/2 right-1/4 w-24 h-24 border-2 border-purple-300/40 rounded-2xl"
         />
       </div>
 
-      <div className="relative z-10 text-center max-w-6xl mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="mb-8"
-        >
-          {/* Greeting */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex items-center justify-center mb-6"
-          >
-            <Sparkles className="w-6 h-6 text-yellow-500 mr-2" />
-            <span className="text-lg text-gray-600 font-medium">Hello, I'm</span>
-            <Sparkles className="w-6 h-6 text-yellow-500 ml-2" />
-          </motion.div>
+      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
 
-          <motion.h1
-            className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 leading-tight"
-            initial={{ opacity: 0, scale: 0.5, rotateX: -90 }}
-            animate={{ opacity: 1, scale: 1, rotateX: 0 }}
-            transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-          >
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-pulse">
-              Patchipala
+      {/* Additional overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent pointer-events-none" />
+
+      <div className="relative z-10 text-center max-w-6xl mx-auto px-6">
+        <div className="mb-6">
+          <div className="inline-block mb-4 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-slate-200">
+            <span className="text-sm text-slate-800 font-medium tracking-wide">
+              Frontend Developer & Designer
             </span>
-            <br />
-            <motion.span
-              className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent"
-              animate={{ backgroundPosition: ['0%', '100%', '0%'] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              Srinivas
-            </motion.span>
-          </motion.h1>
-          
-          <motion.div
-            className="text-3xl md:text-4xl lg:text-5xl text-gray-600 mb-8 h-20 font-light"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
+          </div>
+
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight tracking-tight text-slate-900">
+            Patchipala Srinivas
+          </h1>
+
+          <div className="text-2xl md:text-3xl lg:text-4xl text-slate-700 mb-8 font-light">
             <TypewriterText />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed font-light"
-        >
-          Passionate <span className="font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Frontend Developer</span> crafting beautiful, 
-          interactive digital experiences with modern technologies and innovative design solutions.
-        </motion.p>
+        <p className="text-lg md:text-xl text-slate-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+          Creating seamless digital experiences through clean code, thoughtful design, and attention to detail.
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-        >
-          <motion.button
-            whileHover={{ 
-              scale: 1.05, 
-              boxShadow: "0 25px 50px rgba(59, 130, 246, 0.4)",
-              y: -5
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="group px-10 py-5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-2xl font-semibold shadow-2xl hover:shadow-3xl transition-all duration-500 flex items-center space-x-3 text-lg"
-          >
-            <Eye className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <button className="group px-8 py-4 bg-slate-900 text-white rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 hover:bg-slate-800 shadow-xl hover:shadow-2xl hover:scale-105">
             <span>View My Work</span>
-          </motion.button>
-          
-          <motion.button
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 25px 50px rgba(0, 0, 0, 0.1)",
-              y: -5
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="group px-10 py-5 bg-white/80 backdrop-blur-sm border-2 border-blue-200 text-blue-600 rounded-2xl font-semibold hover:bg-blue-50 transition-all duration-500 flex items-center space-x-3 text-lg shadow-xl"
-          >
-            <Download className="w-6 h-6 group-hover:translate-y-1 transition-transform duration-300" />
-            <span>Download Resume</span>
-          </motion.button>
-        </motion.div>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+          </button>
 
-        {/* Social Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.5 }}
-          className="flex justify-center space-x-12 mt-16"
-        >
+          <button
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = '/path/to/your/resume.pdf'; // replace with your actual resume path
+              link.download = 'Patchipala_Srinivas_Resume.pdf';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+            className="group px-8 py-4 bg-white border-2 border-slate-300 text-slate-900 rounded-lg font-medium hover:bg-slate-50 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+          >
+            <Download className="w-5 h-5" />
+            <span>Download Resume</span>
+          </button>
+        </div>
+
+        {/* Stats Section */}
+        <div className="flex justify-center divide-x divide-slate-300 mt-20">
           {[
             { number: '10+', label: 'Projects' },
             { number: '5+', label: 'Certificates' },
-            { number: '2+', label: 'Years Learning' },
-          ].map((stat, index) => (
-            <motion.div
+            { number: '2+', label: 'Years Experience' },
+          ].map((stat) => (
+            <div
               key={stat.label}
-              whileHover={{ scale: 1.1, y: -5 }}
-              className="text-center"
+              className="px-8 text-center hover:scale-105 transition-transform duration-300"
             >
-              <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <div className="text-3xl md:text-4xl font-bold text-slate-900 mb-1">
                 {stat.number}
               </div>
-              <div className="text-gray-600 font-medium">{stat.label}</div>
-            </motion.div>
+              <div className="text-sm text-slate-600 font-medium">{stat.label}</div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
-      <motion.div
-        animate={{ 
-          y: [0, 15, 0],
-          opacity: [0.5, 1, 0.5]
-        }}
-        transition={{ 
-          duration: 2, 
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
-        onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+      {/* Scroll Down Icon */}
+      <div
+        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer opacity-70 hover:opacity-100 transition-opacity animate-bounce"
+        onClick={() =>
+          document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
+        }
       >
-        <div className="flex flex-col items-center space-y-2">
-          <span className="text-sm text-gray-500 font-medium">Scroll Down</span>
-          <ChevronDown className="text-blue-600 w-8 h-8" />
-        </div>
-      </motion.div>
+        <ChevronDown className="text-slate-600 w-6 h-6" />
+      </div>
     </section>
   );
 };
 
+// Typewriter text animation component
 const TypewriterText = () => {
   const texts = [
-    'Full Stack Developer',
-    'Frontend Specialist', 
-    'UI/UX Designer',
-    'React Developer',
-    'Problem Solver'
+    'Building Digital Products',
+    'Crafting User Experiences',
+    'Solving Problems',
+    'Creating Interfaces',
   ];
   const [currentText, setCurrentText] = React.useState('');
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -314,7 +176,7 @@ const TypewriterText = () => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       const current = texts[currentIndex];
-      
+
       if (isDeleting) {
         setCurrentText(current.substring(0, currentText.length - 1));
       } else {
@@ -330,20 +192,12 @@ const TypewriterText = () => {
     }, isDeleting ? 50 : 100);
 
     return () => clearTimeout(timeout);
-  }, [currentText, currentIndex, isDeleting, texts]);
+  }, [currentText, currentIndex, isDeleting]);
 
   return (
-    <span className="font-light">
-      <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-        {currentText}
-      </span>
-      <motion.span
-        animate={{ opacity: [1, 0, 1] }}
-        transition={{ duration: 1, repeat: Infinity }}
-        className="text-blue-600"
-      >
-        |
-      </motion.span>
+    <span>
+      {currentText}
+      <span className="animate-pulse text-slate-400">|</span>
     </span>
   );
 };

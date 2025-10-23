@@ -1,5 +1,6 @@
 const express = require('express');
 const { body } = require('express-validator');
+const { contactLimiter } = require('../middleware/rateLimiter'); // <-- NEW: Import the limiter
 const {
   createContact,
   getAllContacts,
@@ -54,10 +55,12 @@ const validateContact = [
     .withMessage('Message must be between 10 and 1000 characters')
 ];
 
-// Public routes
-router.post('/', validateContact, createContact);
+// Public route
+// FIX: Apply contactLimiter ONLY to the public POST route
+router.post('/', contactLimiter, validateContact, createContact);
 
-// Admin routes (you might want to add authentication middleware here)
+// Admin routes (These are now only protected by the less aggressive generalLimiter 
+// applied in server.js, and the x-admin-secret-key middleware on the backend)
 router.get('/', getAllContacts);
 router.get('/stats', getContactStats);
 router.get('/:id', getContactById);
