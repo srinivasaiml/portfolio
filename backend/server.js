@@ -53,7 +53,13 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.set('trust proxy', 1);
 
 // ====================================================================
+<<<<<<< HEAD
 // Health Check Route
+=======
+// ---> CORRECT PLACEMENT FOR THE HEALTH CHECK ROUTE <---
+// This specific route is now defined BEFORE any general '/api' middleware,
+// ensuring it gets matched first.
+>>>>>>> 67aabe5e39d9b471936db736d7e260fd2999a8aa
 app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true, message: "Server is healthy and running!" });
 });
@@ -64,12 +70,18 @@ app.get('/api/health', (req, res) => {
 app.use('/api', trackVisitor); // This middleware will run for all subsequent /api routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/', generalLimiter); // Apply general rate limiting to all /api routes
+<<<<<<< HEAD
 
 
 // FIX: REMOVE contactLimiter from here. It will be applied inside contactRoutes.js
 app.use('/api/contact', contactRoutes); 
 
 
+=======
+app.use('/api/contact', contactLimiter, contactRoutes);
+
+
+>>>>>>> 67aabe5e39d9b471936db736d7e260fd2999a8aa
 // Handle unknown routes (This should be the LAST route)
 app.all('*', (req, res) => {
   res.status(404).json({
