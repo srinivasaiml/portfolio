@@ -1,5 +1,3 @@
-// /controllers/contactController.js
-
 const Contact = require('../models/Contact');
 const { validationResult } = require('express-validator');
 // ---> 1. UPDATE THIS LINE to include the new function
@@ -43,21 +41,11 @@ const createContact = async (req, res) => {
     // Save to database
     const savedContact = await newContact.save();
 
-    // --- FIX APPLIED HERE: Use await Promise.all() ---
-    // Wait for both emails to be sent concurrently before responding.
-    try {
-        await Promise.all([
-            sendContactNotification(savedContact), // Notification to admin (you)
-            sendConfirmationEmail(savedContact)    // Automated reply to the user
-        ]);
-        console.log('Both notification and confirmation emails successfully initiated.');
-    } catch (emailError) {
-        // Log the email error but allow the contact form submission to succeed.
-        // The message is saved to the DB, which is the primary goal.
-        console.error('One or more emails failed to send:', emailError);
-        // You might consider a separate monitoring system for these non-critical failures.
-    }
-    // --------------------------------------------------
+    // Send the notification email to yourself
+    sendContactNotification(savedContact);
+    
+    // ---> 2. ADD THIS LINE to send the automated reply to the user
+    sendConfirmationEmail(savedContact);
 
     res.status(201).json({
       success: true,
