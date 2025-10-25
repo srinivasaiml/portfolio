@@ -120,12 +120,14 @@ const createTransporter = () => {
   validateConfig();
   
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // This is true for port 465
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
   // Verify connection
   transporter.verify((error, success) => {
