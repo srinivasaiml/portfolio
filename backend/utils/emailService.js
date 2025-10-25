@@ -116,13 +116,10 @@ const validateConfig = () => {
 };
 
 // Create transporter with validation
-const createTransporter = () => {
-  validateConfig();
-  
-  const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // This is true for port 465
+  port: 587, // <-- CHANGE: Use port 587
+  secure: false, // <-- CHANGE: secure is false for port 587
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
