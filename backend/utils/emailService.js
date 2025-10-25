@@ -1,6 +1,21 @@
+// utils/emailService.js
+
 const nodemailer = require('nodemailer');
 
-// Email templates
+// Utility function to escape HTML and prevent XSS
+const escapeHtml = (text = '') => { // Added default value to prevent errors
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  // Ensure text is a string before replacing
+  return String(text).replace(/[&<>"']/g, (m) => map[m]);
+};
+
+// --- START: All templates are now at the top ---
 const emailTemplates = {
   contactNotification: (contact) => ({
     subject: `New Contact Form Message from ${contact.fullName}`,
@@ -49,7 +64,7 @@ const emailTemplates = {
   }),
 
   userConfirmation: (contact) => ({
-    subject: `Thank You for Your Message, ${contact.firstName}!`,
+    subject: `Thank You for Your Message, ${escapeHtml(contact.firstName)}!`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -92,39 +107,32 @@ const emailTemplates = {
     `
   })
 };
+// --- END: All templates are now at the top ---
 
-// Utility function to escape HTML and prevent XSS
-const escapeHtml = (text) => {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, (m) => map[m]);
-};
 
-// Validate environment variables
-const validateConfig = () => {
+// --- START: This function creates and verifies the transporter ---
+const createTransporter = () => {
+  // Validate environment variables
   const requiredVars = ['EMAIL_USER', 'EMAIL_PASS'];
   const missing = requiredVars.filter(varName => !process.env[varName]);
   
   if (missing.length > 0) {
+    console.error(`Missing required environment variables: ${missing.join(', ')}`);
+    // In a real app, you might want to exit or prevent the app from starting
+    // For now, we'll just log the error.
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
-};
 
-// Create transporter with validation
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587, // <-- CHANGE: Use port 587
-  secure: false, // <-- CHANGE: secure is false for port 587
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+  // Create transporter
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // secure is false for port 587
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
 
   // Verify connection
   transporter.verify((error, success) => {
@@ -137,12 +145,14 @@ const transporter = nodemailer.createTransport({
 
   return transporter;
 };
+// --- END: This function creates and verifies the transporter ---
 
 const transporter = createTransporter();
 
 // Validate contact data
 const validateContact = (contact) => {
-  const required = ['fullName', 'email', 'subject', 'message'];
+  // Added firstName to the validation check
+  const required = ['firstName', 'fullName', 'email', 'subject', 'message'];
   const missing = required.filter(field => !contact[field]);
   
   if (missing.length > 0) {
@@ -156,15 +166,7 @@ const validateContact = (contact) => {
   }
 };
 
-/**
- * Sends a notification email to the admin
- * @param {Object} contact - Contact information
- * @param {string} contact.fullName - Full name of sender
- * @param {string} contact.email - Email of sender
- * @param {string} contact.subject - Message subject
- * @param {string} contact.message - Message content
- * @returns {Promise<Object>} Email send result
- */
+
 const sendContactNotification = async (contact) => {
   try {
     validateContact(contact);
@@ -182,19 +184,11 @@ const sendContactNotification = async (contact) => {
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('✗ Error sending notification email:', error.message);
-    throw error;
+    // Do not re-throw error to allow the other email to attempt sending
   }
 };
 
-/**
- * Sends an automated confirmation email to the user
- * @param {Object} contact - Contact information
- * @param {string} contact.firstName - First name of sender
- * @param {string} contact.email - Email of sender
- * @param {string} contact.subject - Message subject
- * @param {string} contact.message - Message content
- * @returns {Promise<Object>} Email send result
- */
+
 const sendConfirmationEmail = async (contact) => {
   try {
     validateContact(contact);
@@ -211,36 +205,13 @@ const sendConfirmationEmail = async (contact) => {
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error(`✗ Error sending confirmation email to ${contact.email}:`, error.message);
-    throw error;
+    // Do not re-throw error to allow the other email to attempt sending
   }
 };
 
-/**
- * Sends both notification and confirmation emails
- * @param {Object} contact - Contact information
- * @returns {Promise<Object>} Results of both email operations
- */
-const sendContactEmails = async (contact) => {
-  try {
-    const [notificationResult, confirmationResult] = await Promise.allSettled([
-      sendContactNotification(contact),
-      sendConfirmationEmail(contact)
-    ]);
-
-    return {
-      notification: notificationResult,
-      confirmation: confirmationResult,
-      allSuccessful: notificationResult.status === 'fulfilled' && 
-                     confirmationResult.status === 'fulfilled'
-    };
-  } catch (error) {
-    console.error('Error in sendContactEmails:', error);
-    throw error;
-  }
-};
-
+// --- IMPORTANT: This file only exports the two original functions ---
+// Your contactController.js is expecting these two names.
 module.exports = {
   sendContactNotification,
   sendConfirmationEmail,
-  sendContactEmails // Convenience method to send both at once
 };
