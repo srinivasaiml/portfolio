@@ -1,241 +1,365 @@
-const nodemailer = require('nodemailer');
+// utils/emailService.js
 
-// Email templates
-const emailTemplates = {
-  contactNotification: (contact) => ({
-    subject: `New Contact Form Message from ${contact.fullName}`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background-color: #4a5568; color: white; padding: 20px; border-radius: 5px 5px 0 0; }
-            .content { background-color: #f7fafc; padding: 20px; border: 1px solid #e2e8f0; }
-            .field { margin-bottom: 15px; }
-            .label { font-weight: bold; color: #2d3748; }
-            .message-box { background-color: white; padding: 15px; border-left: 4px solid #4299e1; margin: 20px 0; }
-            .footer { color: #718096; font-size: 14px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1 style="margin: 0;">New Contact Form Submission</h1>
-            </div>
-            <div class="content">
-              <div class="field">
-                <span class="label">From:</span> ${escapeHtml(contact.fullName)}
-              </div>
-              <div class="field">
-                <span class="label">Email:</span> <a href="mailto:${contact.email}">${escapeHtml(contact.email)}</a>
-              </div>
-              <div class="field">
-                <span class="label">Subject:</span> ${escapeHtml(contact.subject)}
-              </div>
-              <div class="message-box">
-                <h3 style="margin-top: 0;">Message:</h3>
-                <p>${escapeHtml(contact.message).replace(/\n/g, '<br>')}</p>
-              </div>
-              <div class="footer">
-                <p><em>You can reply directly to this email to respond to ${escapeHtml(contact.email)}.</em></p>
-              </div>
-            </div>
-          </div>
-        </body>
-      </html>
-    `
-  }),
+const { Resend } = require('resend');
 
-  userConfirmation: (contact) => ({
-    subject: `Thank You for Your Message, ${contact.firstName}!`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background-color: #48bb78; color: white; padding: 20px; border-radius: 5px 5px 0 0; }
-            .content { background-color: #f7fafc; padding: 20px; border: 1px solid #e2e8f0; }
-            .message-copy { background-color: white; border-left: 4px solid #48bb78; padding: 15px; margin: 20px 0; }
-            .signature { margin-top: 30px; }
-            .footer { color: #718096; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1 style="margin: 0;">Thank You for Reaching Out!</h1>
-            </div>
-            <div class="content">
-              <p>Hi ${escapeHtml(contact.firstName)},</p>
-              <p>Thank you for contacting me through my portfolio. This is an automated confirmation to let you know that I've received your message.</p>
-              <p>I'll review your message and get back to you as soon as possible, usually within 24-48 hours.</p>
-              <div class="message-copy">
-                <p><strong>Your Message:</strong></p>
-                <p><strong>Subject:</strong> ${escapeHtml(contact.subject)}</p>
-                <p>${escapeHtml(contact.message).replace(/\n/g, '<br>')}</p>
-              </div>
-              <div class="signature">
-                <p>Best regards,</p>
-                <p><strong>Patchipala Srinivas</strong></p>
-              </div>
-              <div class="footer">
-                <p><small>This is an automated message. Please do not reply to this email. I will respond to you from my personal address.</small></p>
-              </div>
-            </div>
-          </div>
-        </body>
-      </html>
-    `
-  })
-};
-
-// Utility function to escape HTML and prevent XSS
-const escapeHtml = (text) => {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, (m) => map[m]);
-};
-
-// Validate environment variables
-const validateConfig = () => {
-  const requiredVars = ['EMAIL_USER', 'EMAIL_PASS'];
-  const missing = requiredVars.filter(varName => !process.env[varName]);
-  
-  if (missing.length > 0) {
-    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
-  }
-};
-
-// Create transporter with validation
-const createTransporter = () => {
-  validateConfig();
-  
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  // Verify connection
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error('Email transporter verification failed:', error);
-    } else {
-      console.log('Email service is ready to send messages');
-    }
-  });
-
-  return transporter;
-};
-
-const transporter = createTransporter();
-
-// Validate contact data
-const validateContact = (contact) => {
-  const required = ['fullName', 'email', 'subject', 'message'];
-  const missing = required.filter(field => !contact[field]);
-  
-  if (missing.length > 0) {
-    throw new Error(`Missing required contact fields: ${missing.join(', ')}`);
-  }
-
-  // Basic email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(contact.email)) {
-    throw new Error('Invalid email address');
-  }
-};
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
- * Sends a notification email to the admin
- * @param {Object} contact - Contact information
- * @param {string} contact.fullName - Full name of sender
- * @param {string} contact.email - Email of sender
- * @param {string} contact.subject - Message subject
- * @param {string} contact.message - Message content
- * @returns {Promise<Object>} Email send result
+ * Modern email template styles
+ */
+const getEmailStyles = () => `
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333333;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+    }
+    .email-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+    .email-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 30px;
+      text-align: center;
+      color: white;
+    }
+    .email-logo {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: bold;
+      backdrop-filter: blur(10px);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    .email-header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .email-body {
+      padding: 40px 30px;
+    }
+    .info-card {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #667eea;
+    }
+    .info-row {
+      display: table;
+      width: 100%;
+      margin: 12px 0;
+    }
+    .info-label {
+      font-weight: 600;
+      color: #667eea;
+      display: inline-block;
+      min-width: 100px;
+    }
+    .info-value {
+      color: #333333;
+      display: inline-block;
+    }
+    .message-box {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      border: 2px solid #e9ecef;
+      position: relative;
+    }
+    .message-box::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      font-size: 60px;
+      color: #667eea;
+      opacity: 0.2;
+    }
+    .message-box h3 {
+      margin: 0 0 15px 0;
+      color: #667eea;
+      font-size: 18px;
+    }
+    .message-content {
+      color: #495057;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+    .greeting {
+      font-size: 18px;
+      color: #333333;
+      margin-bottom: 20px;
+    }
+    .highlight {
+      background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 600;
+    }
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #667eea, transparent);
+      margin: 30px 0;
+      border: none;
+    }
+    .footer {
+      background: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+      border-top: 3px solid #667eea;
+    }
+    .footer p {
+      margin: 8px 0;
+      color: #6c757d;
+      font-size: 14px;
+    }
+    .signature {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333333;
+      margin-top: 20px;
+    }
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 15px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 14px 32px;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 600;
+      margin-top: 20px;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .icon {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+  </style>
+`;
+
+/**
+ * Admin notification template
+ */
+const getAdminNotificationTemplate = (contact) => `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ${getEmailStyles()}
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="email-card">
+        <div class="email-header">
+          <div class="email-logo">📧</div>
+          <h1>New Portfolio Message</h1>
+          <div class="badge">Admin Notification</div>
+        </div>
+        
+        <div class="email-body">
+          <p class="greeting">
+            🎉 You've received a new message through your portfolio!
+          </p>
+          
+          <div class="info-card">
+            <div class="info-row">
+              <span class="info-label">👤 Name:</span>
+              <span class="info-value">${contact.fullName}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">📧 Email:</span>
+              <span class="info-value">${contact.email}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">📝 Subject:</span>
+              <span class="info-value">${contact.subject}</span>
+            </div>
+          </div>
+
+          <div class="message-box">
+            <h3>💬 Message Content:</h3>
+            <div class="message-content">
+              ${contact.message.replace(/\n/g, '<br>')}
+            </div>
+          </div>
+
+          <hr class="divider">
+          
+          <p style="text-align: center; color: #6c757d; font-size: 14px;">
+            💡 <strong>Tip:</strong> Click "Reply" in your email client to respond directly to <span class="highlight">${contact.fullName}</span>
+          </p>
+        </div>
+        
+        <div class="footer">
+          <p><strong>Portfolio Contact System</strong></p>
+          <p>Received: ${new Date().toLocaleString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}</p>
+        </div>
+      </div>
+    </div>
+  </body>
+  </html>
+`;
+
+/**
+ * User confirmation template
+ */
+const getUserConfirmationTemplate = (contact) => `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ${getEmailStyles()}
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="email-card">
+        <div class="email-header">
+          <div class="email-logo">✓</div>
+          <h1>Message Received!</h1>
+          <div class="badge">Confirmation</div>
+        </div>
+        
+        <div class="email-body">
+          <p class="greeting">
+            Hi <span class="highlight">${contact.firstName}</span>,
+          </p>
+          
+          <p style="font-size: 16px; color: #495057;">
+            Thank you for reaching out! 🎉 I wanted to let you know that I've successfully received your message and I'm excited to read it.
+          </p>
+
+          <div class="info-card">
+            <div class="info-row">
+              <span class="info-label">📋 Your Subject:</span>
+              <span class="info-value">${contact.subject}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">📅 Submitted:</span>
+              <span class="info-value">${new Date().toLocaleString('en-US', { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</span>
+            </div>
+          </div>
+
+          <div class="message-box">
+            <h3>📨 What happens next?</h3>
+            <div class="message-content">
+              <p>✓ I'll review your message carefully</p>
+              <p>✓ You'll hear back from me within <strong>24-48 hours</strong></p>
+              <p>✓ I'll respond from my personal email address</p>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <p style="text-align: center; color: #495057; font-size: 15px;">
+            I appreciate you taking the time to connect. Looking forward to our conversation!
+          </p>
+
+          <p class="signature" style="text-align: center;">
+            Best regards,<br>
+            <span class="highlight">P Srinivas</span>
+          </p>
+        </div>
+        
+        <div class="footer">
+          <p><strong>Patchipala Srinivas</strong></p>
+          <p>Portfolio • ${process.env.EMAIL_USER || 'Contact'}</p>
+          <p style="font-size: 12px; color: #adb5bd; margin-top: 15px;">
+            ⚡ This is an automated confirmation email. Please do not reply to this message.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+  </html>
+`;
+
+/**
+ * Sends a notification email to YOU (the admin)
  */
 const sendContactNotification = async (contact) => {
   try {
-    validateContact(contact);
-    
-    const template = emailTemplates.contactNotification(contact);
-    const mailOptions = {
-      from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: 'Portfolio Contact <onboarding@resend.dev>',
       to: process.env.EMAIL_USER,
+      subject: `🔔 New Portfolio Message from ${contact.fullName}`,
       replyTo: contact.email,
-      ...template
-    };
+      html: getAdminNotificationTemplate(contact),
+    });
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('✓ Notification email sent:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log('✓ Notification email sent successfully via Resend!');
   } catch (error) {
-    console.error('✗ Error sending notification email:', error.message);
+    console.error('✗ Error sending notification email via Resend:', error);
     throw error;
   }
 };
 
 /**
- * Sends an automated confirmation email to the user
- * @param {Object} contact - Contact information
- * @param {string} contact.firstName - First name of sender
- * @param {string} contact.email - Email of sender
- * @param {string} contact.subject - Message subject
- * @param {string} contact.message - Message content
- * @returns {Promise<Object>} Email send result
+ * Sends an automated confirmation email TO THE USER
  */
 const sendConfirmationEmail = async (contact) => {
   try {
-    validateContact(contact);
-    
-    const template = emailTemplates.userConfirmation(contact);
-    const mailOptions = {
-      from: `"Patchipala Srinivas" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: 'Patchipala Srinivas <onboarding@resend.dev>',
       to: contact.email,
-      ...template
-    };
+      subject: `✓ Message Received - Thank You, ${contact.firstName}!`,
+      html: getUserConfirmationTemplate(contact),
+    });
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✓ Confirmation email sent to ${contact.email}:`, info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log(`✓ Confirmation email sent to ${contact.email} via Resend!`);
   } catch (error) {
-    console.error(`✗ Error sending confirmation email to ${contact.email}:`, error.message);
-    throw error;
-  }
-};
-
-/**
- * Sends both notification and confirmation emails
- * @param {Object} contact - Contact information
- * @returns {Promise<Object>} Results of both email operations
- */
-const sendContactEmails = async (contact) => {
-  try {
-    const [notificationResult, confirmationResult] = await Promise.allSettled([
-      sendContactNotification(contact),
-      sendConfirmationEmail(contact)
-    ]);
-
-    return {
-      notification: notificationResult,
-      confirmation: confirmationResult,
-      allSuccessful: notificationResult.status === 'fulfilled' && 
-                     confirmationResult.status === 'fulfilled'
-    };
-  } catch (error) {
-    console.error('Error in sendContactEmails:', error);
+    console.error(`✗ Error sending confirmation email to ${contact.email} via Resend:`, error);
     throw error;
   }
 };
@@ -243,5 +367,4 @@ const sendContactEmails = async (contact) => {
 module.exports = {
   sendContactNotification,
   sendConfirmationEmail,
-  sendContactEmails // Convenience method to send both at once
 };
