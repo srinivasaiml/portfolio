@@ -36,15 +36,15 @@ const About = () => {
     { icon: <Heart className="w-6 h-6" />, value: '100%', label: 'Passion' },
   ];
 
-  const handleDownloadResume = () => {
-    // Create a link element and trigger download
-    const link = document.createElement('a');
-    link.href = '/autoCV.pdf'; // Path to your resume file
-    link.download = 'autoCV.pdf'; // Name for downloaded file
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+const handleDownloadResume = () => {
+  const link = document.createElement('a');
+  link.href = '/Srinivas_Patchipala_2026.pdf'; // Path relative to public folder
+  link.download = 'Srinivas_Patchipala_2026.pdf'; // Name for the downloaded file
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 
   return (
     <section id="about" className="py-32 relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
