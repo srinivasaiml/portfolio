@@ -7,7 +7,7 @@ const About = () => {
     {
       icon: <Code className="w-8 h-8" />,
       title: 'Clean Code',
-      description: 'Writing maintainable, scalable, and efficient code following industry best practices and modern development standards.',
+      description: 'Writing maintainable, scalable, and efficient code following industry best practices and modern development standards.', 
       color: 'from-blue-500 to-cyan-500'
     },
     {
