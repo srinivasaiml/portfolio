@@ -12,7 +12,7 @@ const About = () => {
     },
     {
       icon: <Palette className="w-8 h-8" />,
-      title: 'Modern Design',
+      title: 'Modern Design',   
       description: 'Creating beautiful, intuitive user interfaces with attention to detail, aesthetics, and user experience principles.',
       color: 'from-purple-500 to-pink-500'
     },
