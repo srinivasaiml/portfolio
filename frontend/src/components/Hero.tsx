@@ -164,10 +164,10 @@ const Hero = () => {
 // Typewriter text animation component
 const TypewriterText = () => {
   const texts = [
-    'Building Digital Products',
-    'Crafting User Experiences',
-    'Solving Problems',
-    'Creating Interfaces',
+    'Designing Interactive Frontends',
+    'Building Powerful Backends',
+    'Developing Full Stack Applications',
+    'Creating Seamless User Experiences',
   ];
   const [currentText, setCurrentText] = React.useState('');
   const [currentIndex, setCurrentIndex] = React.useState(0);
