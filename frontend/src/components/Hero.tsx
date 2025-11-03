@@ -115,8 +115,8 @@ const Hero = () => {
           <button
             onClick={() => {
               const link = document.createElement('a');
-              link.href = '/path/to/your/resume.pdf'; // replace with your actual resume path
-              link.download = 'Patchipala_Srinivas_Resume.pdf';
+              link.href = '/Srinivas_Patchipala_2026.pdf'; // Path relative to public folder
+              link.download = 'Srinivas_Patchipala_2026.pdf'; // Name for the downloaded file
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
