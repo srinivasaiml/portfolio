@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://pachipala-srinivas.netlify.app/sitemap.xml
