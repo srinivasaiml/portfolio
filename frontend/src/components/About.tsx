@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Code, Palette, Zap, Users, Download, Award, Target, Heart, User } from 'lucide-react';
@@ -48,33 +47,29 @@ const handleDownloadResume = () => {
 };
 
   return (
-    <section id="about" className="py-32 relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:bg-black dark:bg-none">
+    // FIXED LINE BELOW: Removed dark:bg-black and dark:bg-none
+    <section id="about" className="py-32 relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       
       {/* ---------- ANIMATED BLOB EFFECT INTEGRATION START ---------- */}
       <div className="absolute inset-0">
         {/*
           NOTE: To make the animation work, you must add the @keyframes blob-bounce
           to your global CSS file (like globals.css).
-          The styles below roughly translate the original CSS:
-          - A div that covers the section (inset-0)
-          - Inside, the blob element with a custom class to hold the animation.
         */}
         <div 
           className="absolute h-[500px] w-[500px] rounded-full opacity-60 blur-[3rem] bg-pink-500/50"
           style={{ 
-            // Applying the custom CSS animation and positioning
-            animation: 'blob-bounce 12s infinite ease', // Reduced speed for background
-            filter: 'blur(3rem)', // More blur for a softer background effect
+            animation: 'blob-bounce 12s infinite ease', 
+            filter: 'blur(3rem)', 
             top: '50%',
             left: '50%',
           }}
         />
 
-        {/* Optional: Add a second, different-colored blob */}
         <div 
           className="absolute h-[600px] w-[600px] rounded-full opacity-60 blur-[3rem] bg-blue-500/50"
           style={{ 
-            animation: 'blob-bounce 15s infinite ease reverse', // Reverse animation for variety
+            animation: 'blob-bounce 15s infinite ease reverse', 
             filter: 'blur(3rem)',
             top: '20%',
             left: '70%',
