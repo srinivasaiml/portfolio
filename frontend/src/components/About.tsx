@@ -1,18 +1,20 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Code, Palette, Zap, Users, Download, Award, Target, Heart, User } from 'lucide-react';
 
-const About = () => {
+// Using React.FC for better type annotation in TypeScript
+const About: React.FC = () => {
   const skills = [
     {
       icon: <Code className="w-8 h-8" />,
       title: 'Clean Code',
-      description: 'Writing maintainable, scalable, and efficient code following industry best practices and modern development standards.', 
+      description: 'Writing maintainable, scalable, and efficient code following industry best practices and modern development standards.',
       color: 'from-blue-500 to-cyan-500'
     },
     {
       icon: <Palette className="w-8 h-8" />,
-      title: 'Modern Design',   
+      title: 'Modern Design',
       description: 'Creating beautiful, intuitive user interfaces with attention to detail, aesthetics, and user experience principles.',
       color: 'from-purple-500 to-pink-500'
     },
@@ -45,38 +47,41 @@ const handleDownloadResume = () => {
   document.body.removeChild(link);
 };
 
-
   return (
-    <section id="about" className="py-32 relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Enhanced Background Elements */}
+    <section id="about" className="py-32 relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:bg-black dark:bg-none">
+      
+      {/* ---------- ANIMATED BLOB EFFECT INTEGRATION START ---------- */}
       <div className="absolute inset-0">
-        <motion.div
-          animate={{
-            rotate: 360,
-            scale: [1, 1.2, 1],
-            x: [0, 100, 0],
+        {/*
+          NOTE: To make the animation work, you must add the @keyframes blob-bounce
+          to your global CSS file (like globals.css).
+          The styles below roughly translate the original CSS:
+          - A div that covers the section (inset-0)
+          - Inside, the blob element with a custom class to hold the animation.
+        */}
+        <div 
+          className="absolute h-[500px] w-[500px] rounded-full opacity-60 blur-[3rem] bg-pink-500/50"
+          style={{ 
+            // Applying the custom CSS animation and positioning
+            animation: 'blob-bounce 12s infinite ease', // Reduced speed for background
+            filter: 'blur(3rem)', // More blur for a softer background effect
+            top: '50%',
+            left: '50%',
           }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl"
         />
-        <motion.div
-          animate={{
-            rotate: -360,
-            scale: [1, 0.8, 1],
-            y: [0, -50, 0],
+
+        {/* Optional: Add a second, different-colored blob */}
+        <div 
+          className="absolute h-[600px] w-[600px] rounded-full opacity-60 blur-[3rem] bg-blue-500/50"
+          style={{ 
+            animation: 'blob-bounce 15s infinite ease reverse', // Reverse animation for variety
+            filter: 'blur(3rem)',
+            top: '20%',
+            left: '70%',
           }}
-          transition={{
-            duration: 35,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-200/30 to-indigo-200/30 rounded-full blur-3xl"
         />
       </div>
+      {/* ---------- ANIMATED BLOB EFFECT INTEGRATION END ---------- */}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
@@ -149,7 +154,7 @@ const handleDownloadResume = () => {
                 viewport={{ once: true }}
                 className="grid grid-cols-3 gap-6 mb-8"
               >
-                {stats.map((stat, index) => (
+                {stats.map((stat) => (
                   <motion.div
                     key={stat.label}
                     whileHover={{ scale: 1.05, y: -5 }}
