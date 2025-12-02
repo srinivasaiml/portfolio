@@ -34,8 +34,8 @@ const Experience = () => {
       description: 'Developed a full-stack seat reservation platform using Node.js, Express, and MongoDB. Implemented real-time seat tracking with a responsive frontend in HTML, CSS, and JavaScript. Optimized allocation logic, improving seat utilization by 25%, and streamlined the booking process, reducing manual work by 40%.',
       skills: ['Node.js', 'Express', 'MongoDB', 'JavaScript', 'HTML/CSS', 'Full-Stack Development'],
       color: 'from-indigo-500 to-purple-500',
-      bgColor: 'from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30',
-      borderColor: 'border-indigo-200 dark:border-indigo-800',
+      bgColor: 'from-indigo-50 to-purple-50', // Removed dark mode colors
+      borderColor: 'border-indigo-200',
     },
     {
       title: '2024',
@@ -47,8 +47,8 @@ const Experience = () => {
       description: 'Participated in an immersive AI workshop covering latest advancements, trends, and real-world applications. Gained deep insights into machine learning algorithms, neural networks, and AI implementation strategies.',
       skills: ['Machine Learning', 'Neural Networks', 'AI Applications', 'Data Science'],
       color: 'from-purple-500 to-pink-500',
-      bgColor: 'from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30',
-      borderColor: 'border-purple-200 dark:border-purple-800',
+      bgColor: 'from-purple-50 to-pink-50',
+      borderColor: 'border-purple-200',
     },
     {
       title: '2023',
@@ -60,8 +60,8 @@ const Experience = () => {
       description: 'Successfully completed challenging technical treasure hunt involving complex problem-solving, coding challenges, and collaborative teamwork. Demonstrated strong analytical and strategic thinking abilities.',
       skills: ['Problem Solving', 'Algorithms', 'Team Collaboration', 'Strategic Thinking'],
       color: 'from-green-500 to-emerald-500',
-      bgColor: 'from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30',
-      borderColor: 'border-green-200 dark:border-green-800',
+      bgColor: 'from-green-50 to-emerald-50',
+      borderColor: 'border-green-200',
     },
     {
       title: '2023',
@@ -73,8 +73,8 @@ const Experience = () => {
       description: 'Engaged with cutting-edge IoT and ML technologies, learning about sensor networks, data processing, and intelligent system design. Worked on practical projects combining hardware and software solutions.',
       skills: ['IoT Development', 'Sensor Networks', 'Data Processing', 'Embedded Systems'],
       color: 'from-blue-500 to-cyan-500',
-      bgColor: 'from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30',
-      borderColor: 'border-blue-200 dark:border-blue-800',
+      bgColor: 'from-blue-50 to-cyan-50',
+      borderColor: 'border-blue-200',
     },
     {
       title: '2023',
@@ -86,8 +86,8 @@ const Experience = () => {
       description: 'Intensive hands-on training in Django web framework, covering MVC architecture, database integration, user authentication, and deployment strategies for scalable web applications.',
       skills: ['Django', 'Python', 'Web Development', 'Database Design'],
       color: 'from-orange-500 to-red-500',
-      bgColor: 'from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30',
-      borderColor: 'border-orange-200 dark:border-orange-800',
+      bgColor: 'from-orange-50 to-red-50',
+      borderColor: 'border-orange-200',
     }
   ];
 
@@ -104,14 +104,15 @@ const Experience = () => {
 
   return (
     <div
-      className="w-full bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 font-sans md:px-10 relative overflow-hidden"
+      // FIXED: Removed dark mode gradients
+      className="w-full bg-gradient-to-br from-slate-50 via-white to-slate-50 font-sans md:px-10 relative overflow-hidden"
       ref={containerRef}
     >
       {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-green-200/20 dark:bg-green-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-200/20 dark:bg-teal-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-200/10 dark:bg-purple-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-green-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-200/10 rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10 relative z-10">
@@ -122,14 +123,14 @@ const Experience = () => {
           viewport={{ once: true }}
           className="text-center md:text-left"
         >
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-gradient-to-r from-green-100 to-teal-100 dark:from-green-900/30 dark:to-teal-900/30 rounded-full">
-            <Sparkles className="w-4 h-4 text-green-600 dark:text-green-400" />
-            <span className="text-sm font-medium text-green-700 dark:text-green-300">My Journey</span>
+          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-gradient-to-r from-green-100 to-teal-100 rounded-full">
+            <Sparkles className="w-4 h-4 text-green-600" />
+            <span className="text-sm font-medium text-green-700">My Journey</span>
           </div>
           <h2 className="text-4xl md:text-6xl mb-4 font-bold bg-gradient-to-r from-green-600 via-teal-600 to-emerald-600 bg-clip-text text-transparent">
             Experience
           </h2>
-          <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-lg max-w-2xl">
+          <p className="text-neutral-600 text-base md:text-lg max-w-2xl">
             A collection of internships, workshops, competitions, and learning experiences that have shaped my technical journey and expertise.
           </p>
         </motion.div>
@@ -142,7 +143,7 @@ const Experience = () => {
             className="flex justify-start pt-10 md:pt-40 md:gap-10"
           >
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
-              <div className="h-12 absolute left-2.5 md:left-2.5 w-12 rounded-full bg-white dark:bg-neutral-950 flex items-center justify-center shadow-lg">
+              <div className="h-12 absolute left-2.5 md:left-2.5 w-12 rounded-full bg-white flex items-center justify-center shadow-lg">
                 <motion.div 
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
@@ -151,13 +152,13 @@ const Experience = () => {
                   className={`h-6 w-6 rounded-full bg-gradient-to-br ${item.color} shadow-lg`}
                 />
               </div>
-              <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold bg-gradient-to-r from-neutral-300 to-neutral-500 dark:from-neutral-600 dark:to-neutral-400 bg-clip-text text-transparent">
+              <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold bg-gradient-to-r from-neutral-300 to-neutral-500 bg-clip-text text-transparent">
                 {item.title}
               </h3>
             </div>
 
             <div className="relative pl-20 pr-4 md:pl-4 w-full">
-              <h3 className="md:hidden block text-2xl mb-4 text-left font-bold bg-gradient-to-r from-neutral-400 to-neutral-600 dark:from-neutral-500 dark:to-neutral-400 bg-clip-text text-transparent">
+              <h3 className="md:hidden block text-2xl mb-4 text-left font-bold bg-gradient-to-r from-neutral-400 to-neutral-600 bg-clip-text text-transparent">
                 {item.title}
               </h3>
               
@@ -185,7 +186,7 @@ const Experience = () => {
                       {getIcon(item.type)}
                     </motion.div>
                     <div className="min-w-0">
-                      <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-2">
+                      <h4 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight mb-2">
                         {item.event}
                       </h4>
                       <p className={`bg-gradient-to-r ${item.color} bg-clip-text text-transparent font-semibold text-sm md:text-base`}>
@@ -194,18 +195,18 @@ const Experience = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-3 text-gray-600 dark:text-neutral-400 text-sm mb-5 relative z-10">
-                    <div className="flex items-center gap-1.5 bg-white/50 dark:bg-neutral-800/50 px-3 py-1.5 rounded-full">
+                  <div className="flex flex-wrap gap-3 text-gray-600 text-sm mb-5 relative z-10">
+                    <div className="flex items-center gap-1.5 bg-white/50 px-3 py-1.5 rounded-full">
                       <Calendar className="w-4 h-4 flex-shrink-0" />
                       <span>{item.duration}</span>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-white/50 dark:bg-neutral-800/50 px-3 py-1.5 rounded-full">
+                    <div className="flex items-center gap-1.5 bg-white/50 px-3 py-1.5 rounded-full">
                       <MapPin className="w-4 h-4 flex-shrink-0" />
                       <span>{item.location}</span>
                     </div>
                   </div>
 
-                  <p className="text-gray-700 dark:text-neutral-300 mb-6 leading-relaxed text-sm md:text-base relative z-10">
+                  <p className="text-gray-700 mb-6 leading-relaxed text-sm md:text-base relative z-10">
                     {item.description}
                   </p>
 
@@ -218,7 +219,7 @@ const Experience = () => {
                         transition={{ duration: 0.3, delay: skillIndex * 0.05 }}
                         viewport={{ once: true }}
                         whileHover={{ scale: 1.1 }}
-                        className="px-4 py-2 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-gray-700 dark:text-neutral-300 text-xs md:text-sm rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200/50 dark:border-neutral-700/50"
+                        className="px-4 py-2 bg-white/70 backdrop-blur-sm text-gray-700 text-xs md:text-sm rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200/50"
                       >
                         {skill}
                       </motion.span>
@@ -234,7 +235,7 @@ const Experience = () => {
           style={{
             height: height + "px",
           }}
-          className="absolute md:left-8 left-8 top-0 overflow-hidden w-[3px] bg-gradient-to-b from-transparent via-neutral-200 dark:via-neutral-700 to-transparent"
+          className="absolute md:left-8 left-8 top-0 overflow-hidden w-[3px] bg-gradient-to-b from-transparent via-neutral-200 to-transparent"
         >
           <motion.div
             style={{
