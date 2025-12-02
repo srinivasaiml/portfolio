@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Github, Filter } from 'lucide-react';
+import { ExternalLink, Github } from 'lucide-react';
 
 const Projects = () => {
   const [filter, setFilter] = useState('all');
@@ -32,7 +32,7 @@ const Projects = () => {
       category: '2025',
       tech: ['AI/ML', 'React', 'Excel API'],
       liveUrl: 'https://ai-excel.netlify.app/'
-    },,
+    },
     {
       id: 4,
       title: '8 Queen Chess Puzzle',
@@ -96,7 +96,7 @@ const Projects = () => {
     : projects.filter(project => project.category === filter);
 
   return (
-    <section id="projects" className="py-20 bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden dark:bg-black dark:bg-none">
+    <section id="projects" className="py-20 bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0">
         <motion.div
