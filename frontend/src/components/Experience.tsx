@@ -1,187 +1,251 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, MapPin, Award } from 'lucide-react';
+"use client";
+import React, { useEffect, useRef, useState } from 'react';
+import { useScroll, useTransform, motion } from 'framer-motion';
+import { Calendar, MapPin, Award, Sparkles, Briefcase } from 'lucide-react';
 
 const Experience = () => {
+  const ref = useRef(null);
+  const containerRef = useRef(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setHeight(rect.height);
+    }
+  }, [ref]);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 10%", "end 50%"],
+  });
+
+  const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
+  const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+
   const experiences = [
     {
-      title: 'Artificial Intelligence (AI) Workshop',
+      title: '2025',
+      company: 'Aditya University',
+      event: 'Software Engineer Intern',
+      type: 'internship',
+      duration: 'May 2025 – Jun 2025',
+      location: 'Smart Library Seat Management System',
+      description: 'Developed a full-stack seat reservation platform using Node.js, Express, and MongoDB. Implemented real-time seat tracking with a responsive frontend in HTML, CSS, and JavaScript. Optimized allocation logic, improving seat utilization by 25%, and streamlined the booking process, reducing manual work by 40%.',
+      skills: ['Node.js', 'Express', 'MongoDB', 'JavaScript', 'HTML/CSS', 'Full-Stack Development'],
+      color: 'from-indigo-500 to-purple-500',
+      bgColor: 'from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30',
+      borderColor: 'border-indigo-200 dark:border-indigo-800',
+    },
+    {
+      title: '2024',
       company: 'proTreX Technology re-Xplained',
-      period: '2024',
+      event: 'Artificial Intelligence (AI) Workshop',
+      type: 'workshop',
+      duration: '2024',
       location: 'Tech Conference',
       description: 'Participated in an immersive AI workshop covering latest advancements, trends, and real-world applications. Gained deep insights into machine learning algorithms, neural networks, and AI implementation strategies.',
       skills: ['Machine Learning', 'Neural Networks', 'AI Applications', 'Data Science'],
-      icon: <Award className="w-6 h-6" />
+      color: 'from-purple-500 to-pink-500',
+      bgColor: 'from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30',
+      borderColor: 'border-purple-200 dark:border-purple-800',
     },
     {
-      title: 'Technical Treasure Hunt Winner',
+      title: '2023',
       company: 'Veda 2023 Technical Symposium',
-      period: '2023',
+      event: 'Technical Treasure Hunt Winner',
+      type: 'achievement',
+      duration: '2023',
       location: 'National Level Competition',
       description: 'Successfully completed challenging technical treasure hunt involving complex problem-solving, coding challenges, and collaborative teamwork. Demonstrated strong analytical and strategic thinking abilities.',
       skills: ['Problem Solving', 'Algorithms', 'Team Collaboration', 'Strategic Thinking'],
-      icon: <Award className="w-6 h-6" />
+      color: 'from-green-500 to-emerald-500',
+      bgColor: 'from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30',
+      borderColor: 'border-green-200 dark:border-green-800',
     },
     {
-      title: 'IoT & Machine Learning Workshop',
+      title: '2023',
       company: 'Appleton Innovations',
-      period: '2023',
+      event: 'IoT & Machine Learning Workshop',
+      type: 'workshop',
+      duration: '2023',
       location: 'Technology Seminar',
       description: 'Engaged with cutting-edge IoT and ML technologies, learning about sensor networks, data processing, and intelligent system design. Worked on practical projects combining hardware and software solutions.',
       skills: ['IoT Development', 'Sensor Networks', 'Data Processing', 'Embedded Systems'],
-      icon: <Award className="w-6 h-6" />
+      color: 'from-blue-500 to-cyan-500',
+      bgColor: 'from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30',
+      borderColor: 'border-blue-200 dark:border-blue-800',
     },
     {
-      title: 'Web Development with Django',
+      title: '2023',
       company: 'Technical Workshop',
-      period: '2023',
+      event: 'Web Development with Django',
+      type: 'workshop',
+      duration: '2023',
       location: 'Development Bootcamp',
       description: 'Intensive hands-on training in Django web framework, covering MVC architecture, database integration, user authentication, and deployment strategies for scalable web applications.',
       skills: ['Django', 'Python', 'Web Development', 'Database Design'],
-      icon: <Award className="w-6 h-6" />
+      color: 'from-orange-500 to-red-500',
+      bgColor: 'from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30',
+      borderColor: 'border-orange-200 dark:border-orange-800',
     }
   ];
 
+  const getIcon = (type) => {
+    switch(type) {
+      case 'internship':
+        return <Briefcase className="w-5 h-5 md:w-6 md:h-6" />;
+      case 'achievement':
+        return <Award className="w-5 h-5 md:w-6 md:h-6" />;
+      default:
+        return <Award className="w-5 h-5 md:w-6 md:h-6" />;
+    }
+  };
+
   return (
-    <section id="experience" className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-green-50 to-teal-50 relative overflow-hidden">
-      {/* Background Animation */}
-      <div className="absolute inset-0">
-        <motion.div
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-            rotate: [0, 90, 180, 270, 360],
-          }}
-          transition={{
-            duration: 40,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute top-10 sm:top-20 left-10 sm:left-20 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-green-200 to-teal-200 rounded-lg opacity-20"
-        />
-        <motion.div
-          animate={{
-            x: [0, -70, 0],
-            y: [0, 40, 0],
-            rotate: [0, -90, -180, -270, -360],
-          }}
-          transition={{
-            duration: 35,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-20 h-20 sm:w-32 sm:h-32 border-4 border-teal-200 rounded-full opacity-20"
-        />
+    <div
+      className="w-full bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:bg-gradient-to-br dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 font-sans md:px-10 relative overflow-hidden"
+      ref={containerRef}
+    >
+      {/* Floating background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-green-200/20 dark:bg-green-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-200/20 dark:bg-teal-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-purple-200/10 dark:bg-purple-500/5 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12 sm:mb-16"
+          className="text-center md:text-left"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-gradient-to-r from-green-100 to-teal-100 dark:from-green-900/30 dark:to-teal-900/30 rounded-full">
+            <Sparkles className="w-4 h-4 text-green-600 dark:text-green-400" />
+            <span className="text-sm font-medium text-green-700 dark:text-green-300">My Journey</span>
+          </div>
+          <h2 className="text-4xl md:text-6xl mb-4 font-bold bg-gradient-to-r from-green-600 via-teal-600 to-emerald-600 bg-clip-text text-transparent">
             Experience
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-            My journey through various workshops, competitions, and learning experiences
+          <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-lg max-w-2xl">
+            A collection of internships, workshops, competitions, and learning experiences that have shaped my technical journey and expertise.
           </p>
         </motion.div>
+      </div>
 
-        {/* Mobile-First Timeline */}
-        <div className="space-y-8 sm:space-y-12 md:space-y-16">
-          {experiences.map((exp, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
-              {/* Timeline Line - Hidden on mobile, visible on larger screens */}
-              <div className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-green-400 to-teal-500 rounded-full"></div>
-              
-              {/* Content Card */}
-              <div className={`flex flex-col lg:flex-row items-center ${
-                index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
-              }`}>
-                {/* Card Content */}
-                <div className={`w-full lg:w-5/12 ${
-                  index % 2 === 0 ? 'lg:pr-8' : 'lg:pl-8'
-                }`}>
-                  <motion.div
-                    whileHover={{ 
-                      scale: 1.02,
-                      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)"
-                    }}
-                    className="bg-white/80 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-lg border border-white/30 transform-gpu"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center mb-4">
-                      <div className="flex items-center mb-2 sm:mb-0">
-                        <div className="p-2 bg-gradient-to-br from-green-500 to-teal-500 rounded-lg text-white mr-3 flex-shrink-0">
-                          {exp.icon}
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 leading-tight">
-                            {exp.title}
-                          </h3>
-                          <p className="text-green-600 font-medium text-sm sm:text-base">
-                            {exp.company}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row sm:items-center text-gray-500 text-sm mb-4 space-y-2 sm:space-y-0 sm:space-x-4">
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1 flex-shrink-0" />
-                        <span>{exp.period}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-                        <span>{exp.location}</span>
-                      </div>
-                    </div>
-                    
-                    <p className="text-gray-700 mb-6 leading-relaxed text-sm sm:text-base">
-                      {exp.description}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      {exp.skills.map((skill) => (
-                        <span
-                          key={skill}
-                          className="px-3 py-1 bg-gradient-to-r from-green-100 to-teal-100 text-green-700 text-xs sm:text-sm rounded-full font-medium"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Timeline Marker - Only visible on large screens */}
-                <div className="hidden lg:flex w-2/12 justify-center">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
-                    viewport={{ once: true }}
-                    className="w-6 h-6 bg-gradient-to-br from-green-500 to-teal-500 rounded-full border-4 border-white shadow-lg z-10"
-                  ></motion.div>
-                </div>
-
-                {/* Spacer */}
-                <div className="w-full lg:w-5/12"></div>
+      <div ref={ref} className="relative max-w-7xl mx-auto pb-20">
+        {experiences.map((item, index) => (
+          <div
+            key={index}
+            className="flex justify-start pt-10 md:pt-40 md:gap-10"
+          >
+            <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
+              <div className="h-12 absolute left-2.5 md:left-2.5 w-12 rounded-full bg-white dark:bg-neutral-950 flex items-center justify-center shadow-lg">
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className={`h-6 w-6 rounded-full bg-gradient-to-br ${item.color} shadow-lg`}
+                />
               </div>
-            </motion.div>
-          ))}
+              <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold bg-gradient-to-r from-neutral-300 to-neutral-500 dark:from-neutral-600 dark:to-neutral-400 bg-clip-text text-transparent">
+                {item.title}
+              </h3>
+            </div>
+
+            <div className="relative pl-20 pr-4 md:pl-4 w-full">
+              <h3 className="md:hidden block text-2xl mb-4 text-left font-bold bg-gradient-to-r from-neutral-400 to-neutral-600 dark:from-neutral-500 dark:to-neutral-400 bg-clip-text text-transparent">
+                {item.title}
+              </h3>
+              
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ 
+                  scale: 1.02,
+                  transition: { duration: 0.2 }
+                }}
+                className="mb-8"
+              >
+                <div className={`bg-gradient-to-br ${item.bgColor} backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-xl border ${item.borderColor} hover:shadow-2xl transition-all duration-300 relative overflow-hidden group`}>
+                  {/* Shine effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                  
+                  <div className="flex items-start mb-4 relative z-10">
+                    <motion.div 
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.6 }}
+                      className={`p-3 bg-gradient-to-br ${item.color} rounded-xl text-white mr-4 flex-shrink-0 shadow-lg`}
+                    >
+                      {getIcon(item.type)}
+                    </motion.div>
+                    <div className="min-w-0">
+                      <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-2">
+                        {item.event}
+                      </h4>
+                      <p className={`bg-gradient-to-r ${item.color} bg-clip-text text-transparent font-semibold text-sm md:text-base`}>
+                        {item.company}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 text-gray-600 dark:text-neutral-400 text-sm mb-5 relative z-10">
+                    <div className="flex items-center gap-1.5 bg-white/50 dark:bg-neutral-800/50 px-3 py-1.5 rounded-full">
+                      <Calendar className="w-4 h-4 flex-shrink-0" />
+                      <span>{item.duration}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white/50 dark:bg-neutral-800/50 px-3 py-1.5 rounded-full">
+                      <MapPin className="w-4 h-4 flex-shrink-0" />
+                      <span>{item.location}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-700 dark:text-neutral-300 mb-6 leading-relaxed text-sm md:text-base relative z-10">
+                    {item.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 relative z-10">
+                    {item.skills.map((skill, skillIndex) => (
+                      <motion.span
+                        key={skillIndex}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: skillIndex * 0.05 }}
+                        viewport={{ once: true }}
+                        whileHover={{ scale: 1.1 }}
+                        className="px-4 py-2 bg-white/70 dark:bg-neutral-800/70 backdrop-blur-sm text-gray-700 dark:text-neutral-300 text-xs md:text-sm rounded-full font-medium shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200/50 dark:border-neutral-700/50"
+                      >
+                        {skill}
+                      </motion.span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        ))}
+
+        <div
+          style={{
+            height: height + "px",
+          }}
+          className="absolute md:left-8 left-8 top-0 overflow-hidden w-[3px] bg-gradient-to-b from-transparent via-neutral-200 dark:via-neutral-700 to-transparent"
+        >
+          <motion.div
+            style={{
+              height: heightTransform,
+              opacity: opacityTransform,
+            }}
+            className="absolute inset-x-0 top-0 w-[3px] bg-gradient-to-b from-green-500 via-teal-500 to-emerald-500 shadow-lg shadow-teal-500/50"
+          />
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
