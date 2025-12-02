@@ -26,13 +26,13 @@ const Projects = () => {
     },
     {
       id: 3,
-      title: 'Flames Calculator',
-      description: 'Interactive relationship compatibility calculator with modern UI',
-      image: 'https://i.imgur.com/kP8Y1I4.png',
+      title: 'AI Excel Assistant',
+      description: 'AI-powered Excel assistant that lets you edit, create, and manage Excel files using natural language commands',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop',
       category: '2025',
-      tech: ['JavaScript', 'CSS3', 'HTML5'],
-      liveUrl: 'https://srinivasaiml.github.io/project/flames.html'
-    },
+      tech: ['AI/ML', 'React', 'Excel API'],
+      liveUrl: 'https://ai-excel.netlify.app/'
+    },,
     {
       id: 4,
       title: '8 Queen Chess Puzzle',
@@ -96,7 +96,7 @@ const Projects = () => {
     : projects.filter(project => project.category === filter);
 
   return (
-    <section id="projects" className="py-20 bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
+    <section id="projects" className="py-20 bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden dark:bg-black dark:bg-none">
       {/* Animated Background */}
       <div className="absolute inset-0">
         <motion.div
