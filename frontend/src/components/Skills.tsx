@@ -1,221 +1,436 @@
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Code, Database, Globe, Server, Terminal, Rocket, Award, TrendingUp, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useTheme } from '../components/ThemeContext';
+import { 
+  FaReact, FaNodeJs, FaPython, FaJs, FaHtml5, FaCss3Alt, FaGitAlt, 
+  FaGithub, FaAws, FaDocker, FaLinux, FaFigma, FaSass,
+  FaDatabase, FaServer, FaCode, FaBootstrap,
+  FaGoogle, FaMicrosoft, FaApple, FaAndroid, FaWindows,
+  FaNpm, FaJenkins, FaTrello, FaSlack, FaJira,
+  FaAdobe, FaUnity, FaSpotify, FaPaypal, FaStripe,
+  FaBitcoin, FaLinkedin, FaTwitter, FaInstagram, FaFacebook, FaYoutube
+} from 'react-icons/fa';
+import { 
+  SiTypescript, SiNextdotjs, SiTailwindcss, SiDjango, 
+  SiExpress, SiFastapi, SiMongodb, SiMysql, SiPostgresql, 
+  SiRedis, SiPrisma, SiVercel, SiVite, SiJest, SiStorybook, 
+  SiD3Dotjs, SiFramer, SiGraphql, SiSocketdotio, SiWebpack,
+  SiEthereum, SiSolidity, SiStripe as SiStripeIcon, SiShopify, 
+  SiWordpress, SiSquarespace, SiWebflow, SiNotion, SiAirtable,
+  SiJira as SiJiraIcon, SiGitlab, SiAzuredevops, SiCircleci, 
+  SiKubernetes, SiTerraform, SiAnsible, SiPrometheus, SiGrafana,
+  SiElastic, SiNginx, SiCloudflare, SiDigitalocean, SiHeroku,
+  SiNetlify, SiFirebase, SiSupabase, SiGraphql as SiGraphqlIcon,
+  SiSwagger, SiPostman, SiVscode, SiVisualstudio,
+  SiNodedotjs, SiNestjs, SiSvelte, SiQwik, SiAstro,
+  SiGatsby, SiNuxtdotjs, SiVuedotjs, SiAngular, SiPreact,
+  SiGoogleanalytics, SiGoogletagmanager, SiBrave,
+  SiFirefox, SiChromium, SiEdge, SiRaspberrypi, SiArduino,
+  SiNvidia, SiAmd, SiIntel, SiSamsung, SiSony
+} from 'react-icons/si';
 
 const Skills = () => {
-  const [activeCategory, setActiveCategory] = useState(0);
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const [isScattered, setIsScattered] = useState(true);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [imageRotation, setImageRotation] = useState(0);
+  const skillsRef = useRef(null);
+  const lastScrollY = useRef(0);
+  const { theme } = useTheme();
 
-  const skillCategories = [
-    {
-      title: 'Frontend',
-      icon: <Globe className="w-6 h-6" />,
-      color: 'from-blue-500 to-cyan-500',
-      bgGradient: 'from-blue-500/20 to-cyan-500/20',
-      skills: [
-        { name: 'HTML5', level: 90, icon: '🌐', description: 'Semantic markup & accessibility' },
-        { name: 'CSS3', level: 85, icon: '🎨', description: 'Advanced styling & animations' },
-        { name: 'JavaScript', level: 80, icon: '⚡', description: 'ES6+ & modern frameworks' },
-        { name: 'React', level: 75, icon: '⚛️', description: 'Component-based architecture' },
-      ]
-    },
-    {
-      title: 'Backend',
-      icon: <Server className="w-6 h-6" />,
-      color: 'from-green-500 to-emerald-500',
-      bgGradient: 'from-green-500/20 to-emerald-500/20',
-      skills: [
-        { name: 'Node.js', level: 70, icon: '🟢', description: 'Scalable server applications' },
-        { name: 'Python', level: 85, icon: '🐍', description: 'Data processing & automation' },
-        { name: 'Django', level: 75, icon: '🎯', description: 'Full-stack web framework' },
-        { name: 'Express', level: 65, icon: '🚀', description: 'RESTful API development' },
-      ]
-    },
-    {
-      title: 'Database',
-      icon: <Database className="w-6 h-6" />,
-      color: 'from-purple-500 to-pink-500',
-      bgGradient: 'from-purple-500/20 to-pink-500/20',
-      skills: [
-        { name: 'SQL', level: 75, icon: '🗄️', description: 'Complex queries & optimization' },
-        { name: 'MongoDB', level: 70, icon: '🍃', description: 'NoSQL document databases' },
-        { name: 'MySQL', level: 80, icon: '🐬', description: 'Relational data management' },
-        { name: 'PostgreSQL', level: 65, icon: '🐘', description: 'Advanced SQL features' },
-      ]
-    },
-    {
-      title: 'Tools & DevOps',
-      icon: <Terminal className="w-6 h-6" />,
-      color: 'from-orange-500 to-red-500',
-      bgGradient: 'from-orange-500/20 to-red-500/20',
-      skills: [
-        { name: 'Git', level: 80, icon: '📝', description: 'Version control & collaboration' },
-        { name: 'Docker', level: 60, icon: '🐳', description: 'Container orchestration' },
-        { name: 'AWS', level: 55, icon: '☁️', description: 'Cloud infrastructure' },
-        { name: 'Linux', level: 70, icon: '🐧', description: 'System administration' },
-      ]
-    }
+  // Full Stack Developer Icons with proper React Icons
+  const techIcons = [
+    // Frontend
+    { icon: <FaReact />, name: 'React', color: 'from-cyan-400 to-blue-500' },
+    { icon: <SiTypescript />, name: 'TypeScript', color: 'from-blue-500 to-blue-700' },
+    { icon: <SiNextdotjs />, name: 'Next.js', color: 'from-gray-900 to-black' },
+    { icon: <FaHtml5 />, name: 'HTML5', color: 'from-orange-500 to-red-500' },
+    { icon: <FaCss3Alt />, name: 'CSS3', color: 'from-blue-400 to-purple-500' },
+    { icon: <FaJs />, name: 'JavaScript', color: 'from-yellow-400 to-orange-500' },
+    { icon: <SiTailwindcss />, name: 'Tailwind', color: 'from-teal-400 to-cyan-500' },
+    { icon: <FaSass />, name: 'Sass', color: 'from-pink-400 to-pink-600' },
+    { icon: <FaFigma />, name: 'Figma', color: 'from-purple-500 to-red-500' },
+    { icon: <SiVuedotjs />, name: 'Vue.js', color: 'from-green-500 to-green-700' },
+    { icon: <SiAngular />, name: 'Angular', color: 'from-red-500 to-red-700' },
+    { icon: <SiSvelte />, name: 'Svelte', color: 'from-orange-500 to-orange-700' },
+    
+    // Backend
+    { icon: <FaNodeJs />, name: 'Node.js', color: 'from-green-500 to-green-700' },
+    { icon: <FaPython />, name: 'Python', color: 'from-blue-400 to-yellow-400' },
+    { icon: <SiDjango />, name: 'Django', color: 'from-green-600 to-green-800' },
+    { icon: <SiExpress />, name: 'Express', color: 'from-gray-600 to-gray-800' },
+    { icon: <SiFastapi />, name: 'FastAPI', color: 'from-teal-500 to-green-500' },
+    { icon: <SiNestjs />, name: 'NestJS', color: 'from-red-500 to-red-800' },
+    
+    // Database
+    { icon: <FaDatabase />, name: 'SQL', color: 'from-blue-600 to-indigo-600' },
+    { icon: <SiMongodb />, name: 'MongoDB', color: 'from-green-400 to-green-600' },
+    { icon: <SiMysql />, name: 'MySQL', color: 'from-blue-500 to-blue-700' },
+    { icon: <SiPostgresql />, name: 'PostgreSQL', color: 'from-blue-600 to-blue-800' },
+    { icon: <SiRedis />, name: 'Redis', color: 'from-red-500 to-red-700' },
+    { icon: <SiPrisma />, name: 'Prisma', color: 'from-indigo-500 to-purple-600' },
+    
+    // DevOps & Cloud
+    { icon: <FaGitAlt />, name: 'Git', color: 'from-orange-500 to-red-600' },
+    { icon: <FaDocker />, name: 'Docker', color: 'from-blue-400 to-blue-600' },
+    { icon: <FaAws />, name: 'AWS', color: 'from-orange-400 to-yellow-500' },
+    { icon: <FaLinux />, name: 'Linux', color: 'from-yellow-400 to-black' },
+    { icon: <SiKubernetes />, name: 'Kubernetes', color: 'from-blue-500 to-blue-700' },
+    { icon: <SiTerraform />, name: 'Terraform', color: 'from-purple-500 to-purple-700' },
+    { icon: <SiAnsible />, name: 'Ansible', color: 'from-red-500 to-red-800' },
+    
+    // Tools & Platforms
+    { icon: <FaGithub />, name: 'GitHub', color: 'from-gray-700 to-black' },
+    { icon: <SiVercel />, name: 'Vercel', color: 'from-black to-gray-800' },
+    { icon: <SiVite />, name: 'Vite', color: 'from-purple-500 to-yellow-400' },
+    { icon: <SiJest />, name: 'Jest', color: 'from-red-500 to-orange-500' },
+    { icon: <SiStorybook />, name: 'Storybook', color: 'from-pink-500 to-purple-600' },
+    { icon: <SiFramer />, name: 'Framer Motion', color: 'from-pink-500 to-purple-500' },
+    { icon: <SiWebpack />, name: 'Webpack', color: 'from-blue-500 to-blue-800' },
+    { icon: <SiGraphql />, name: 'GraphQL', color: 'from-pink-500 to-purple-600' },
+    
+    // Monitoring & Analytics
+    { icon: <SiPrometheus />, name: 'Prometheus', color: 'from-orange-500 to-red-500' },
+    { icon: <SiGrafana />, name: 'Grafana', color: 'from-orange-400 to-red-600' },
+    { icon: <SiGoogleanalytics />, name: 'Analytics', color: 'from-blue-500 to-green-500' },
+    
+    // Others
+    { icon: <SiSupabase />, name: 'Supabase', color: 'from-green-400 to-green-600' },
+    { icon: <SiFirebase />, name: 'Firebase', color: 'from-yellow-500 to-orange-500' },
+    { icon: <SiNetlify />, name: 'Netlify', color: 'from-teal-400 to-teal-600' },
+    { icon: <SiDigitalocean />, name: 'DigitalOcean', color: 'from-blue-400 to-blue-600' },
   ];
 
-  const stats = [
-    { number: '15+', label: 'Technologies', icon: <Code className="w-6 h-6" /> },
-    { number: '4', label: 'Specializations', icon: <Award className="w-6 h-6" /> },
-    { number: '10+', label: 'Projects Built', icon: <Rocket className="w-6 h-6" /> },
-    { number: '∞', label: 'Learning Mode', icon: <TrendingUp className="w-6 h-6" /> },
+  const ribbonTexts = [
+    ['ACCESSIBLE', 'RESPONSIVE', 'DYNAMIC', 'SCALABLE', 'SEARCH OPTIMIZED', 'INTERACTIVE', 'SECURE', 'RELIABLE', 'ENGAGING'],
+    ['IMPACTFUL', 'ACCESSIBLE', 'RESPONSIVE', 'DYNAMIC', 'SCALABLE', 'SEARCH OPTIMIZED', 'INTERACTIVE', 'SECURE', 'RELIABLE', 'ENGAGING']
   ];
 
-  const particles = useMemo(() => 
-    Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      duration: Math.random() * 8 + 4,
-      delay: Math.random() * 3,
-      size: Math.random() * 2 + 1,
-    })), []
-  );
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!skillsRef.current) return;
+
+      const rect = skillsRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+      const currentScrollY = window.scrollY;
+
+      // Rotate image based on scroll
+      setImageRotation(currentScrollY * 0.2);
+
+      if (isInView && !hasAnimated) {
+        setHasAnimated(true);
+        setTimeout(() => setIsScattered(false), 300);
+      }
+
+      if (hasAnimated && isInView) {
+        if (currentScrollY < lastScrollY.current && !isScattered) {
+          setIsScattered(true);
+        } else if (currentScrollY > lastScrollY.current && isScattered) {
+          setIsScattered(false);
+        }
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasAnimated, isScattered]);
+
+  const generateScatterPosition = (index) => {
+    const angle = (index * 137.5 + Math.random() * 30) * (Math.PI / 180);
+    const distance = window.innerWidth < 768 ? 150 + Math.random() * 200 : 300 + Math.random() * 400;
+    return {
+      x: Math.cos(angle) * distance,
+      y: Math.sin(angle) * distance,
+      rotate: -180 + Math.random() * 360,
+    };
+  };
 
   return (
-    <section id="skills" className="py-20 md:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-neutral-900 dark:to-slate-950 relative overflow-hidden transition-colors duration-500">
-      
-      {/* Background FX */}
+    <section
+      id="skills"
+      className={`min-h-screen relative overflow-hidden py-12 sm:py-16 md:py-20 transition-colors duration-500 ${
+        theme === 'dark'
+          ? 'bg-gradient-to-br from-gray-950 via-indigo-950/80 to-purple-950/90' 
+          : 'bg-gradient-to-br from-sky-50 via-indigo-50/70 to-purple-50/90'
+      }`}
+    >
+      {/* Animated Gradient Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Main gradient circles */}
         <motion.div
-          animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
-          className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-r from-blue-400/30 to-cyan-400/30 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-full blur-3xl"
+          animate={{ 
+            x: [0, 100, 0],
+            y: [0, 50, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className={`absolute top-1/4 -left-1/4 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-3xl ${
+            theme === 'dark' ? 'bg-purple-600/30' : 'bg-purple-300/40'
+          }`}
         />
-        {/* Particles */}
-        {particles.map((particle) => (
+        <motion.div
+          animate={{ 
+            x: [0, -80, 0],
+            y: [0, 100, 0],
+            scale: [1.1, 1, 1.1]
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          className={`absolute bottom-1/4 -right-1/4 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-3xl ${
+            theme === 'dark' ? 'bg-blue-600/30' : 'bg-blue-300/40'
+          }`}
+        />
+        <motion.div
+          animate={{ 
+            x: [-50, 50, -50],
+            y: [0, -30, 0],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 sm:w-[600px] sm:h-[600px] rounded-full blur-3xl ${
+            theme === 'dark' ? 'bg-indigo-600/20' : 'bg-indigo-200/30'
+          }`}
+        />
+        
+        {/* Grid pattern for light theme */}
+        {theme === 'light' && (
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `linear-gradient(to right, #8b5cf6 1px, transparent 1px),
+                                linear-gradient(to bottom, #8b5cf6 1px, transparent 1px)`,
+              backgroundSize: '50px 50px'
+            }} />
+          </div>
+        )}
+        
+        {/* Subtle particles */}
+        {[...Array(20)].map((_, i) => (
           <motion.div
-            key={particle.id}
-            className="absolute bg-blue-400/30 dark:bg-blue-300/20 rounded-full"
-            style={{
-              left: `${particle.left}%`,
-              top: `${particle.top}%`,
-              width: particle.size,
-              height: particle.size,
+            key={i}
+            animate={{
+              x: [0, Math.random() * 100 - 50],
+              y: [0, Math.random() * 100 - 50],
+              opacity: [0.2, 0.5, 0.2]
             }}
-            animate={{ y: [0, -40, 0], opacity: [0, 1, 0] }}
-            transition={{ duration: particle.duration, repeat: Infinity, delay: particle.delay }}
+            transition={{
+              duration: Math.random() * 15 + 15,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className={`absolute w-1 h-1 rounded-full ${
+              theme === 'dark' ? 'bg-white/30' : 'bg-purple-400/40'
+            }`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+          />
+        ))}
+        
+        {/* Floating shapes */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{
+              x: [0, Math.random() * 200 - 100],
+              y: [0, Math.random() * 200 - 100],
+              rotate: [0, 360]
+            }}
+            transition={{
+              duration: Math.random() * 20 + 20,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className={`absolute w-10 h-10 rounded-lg ${
+              theme === 'dark' ? 'bg-blue-500/10' : 'bg-purple-300/20'
+            } blur-sm`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
           />
         ))}
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-0 sm:px-0 lg:px-0 relative z-10">
+        {/* Header with Image - Increased image size */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-20"
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12 sm:mb-16 px-4"
         >
-          <div className="inline-block relative mb-8">
-            <div className="relative p-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl shadow-2xl">
-              <Sparkles className="w-16 h-16 text-white" />
-            </div>
-          </div>
-          
-          <h2 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Technical Arsenal
-          </h2>
-          <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
-            Mastering the tools and technologies that power modern digital experiences
-          </p>
-        </motion.div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-          {stats.map((stat) => (
-            <motion.div
-              key={stat.label}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white/80 dark:bg-slate-800/60 backdrop-blur-xl border border-white/60 dark:border-white/10 rounded-2xl p-6 text-center shadow-lg"
-            >
-              <div className="text-blue-600 dark:text-blue-400 mb-3 flex justify-center">{stat.icon}</div>
-              <div className="text-4xl font-black text-gray-900 dark:text-white mb-2">{stat.number}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
-          {skillCategories.map((category, index) => (
-            <motion.button
-              key={category.title}
-              onClick={() => setActiveCategory(index)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`relative px-8 py-4 rounded-2xl font-bold transition-all duration-300 overflow-hidden border border-transparent ${
-                activeCategory === index
-                  ? 'text-white shadow-2xl'
-                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm border-gray-200 dark:border-slate-700'
-              }`}
-            >
-              {activeCategory === index && (
-                <motion.div
-                  layoutId="activeCategory"
-                  className={`absolute inset-0 bg-gradient-to-r ${category.color}`}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-              <div className="relative flex items-center gap-3">
-                {category.icon}
-                <span>{category.title}</span>
-              </div>
-            </motion.button>
-          ))}
-        </div>
-
-        {/* Skills Display */}
-        <AnimatePresence mode="wait">
           <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.4 }}
-            className="max-w-5xl mx-auto"
+            className="inline-block mb-8 sm:mb-10"
+            style={{ rotate: imageRotation }}
+            transition={{ type: 'spring', stiffness: 50 }}
           >
-            <div className="relative bg-white/80 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {skillCategories[activeCategory].skills.map((skill, index) => (
-                  <motion.div
-                    key={skill.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    onHoverStart={() => setHoveredSkill(skill.name)}
-                    onHoverEnd={() => setHoveredSkill(null)}
-                    className="group relative p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 border border-gray-100 dark:border-slate-700 shadow-lg"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-4">
-                        <span className="text-4xl">{skill.icon}</span>
-                        <div>
-                          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{skill.name}</h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{skill.description}</p>
-                        </div>
-                      </div>
-                      <div className={`px-4 py-2 bg-gradient-to-r ${skillCategories[activeCategory].color} rounded-full font-bold text-white text-sm shadow-lg`}>
-                        {skill.level}%
-                      </div>
-                    </div>
-
-                    <div className="relative h-4 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                      <motion.div
-                        className={`absolute inset-y-0 left-0 bg-gradient-to-r ${skillCategories[activeCategory].color}`}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${skill.level}%` }}
-                        transition={{ duration: 1, delay: 0.3 }}
-                      />
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+            <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-80 lg:h-80 mx-auto relative">
+              <img 
+                src="/steel-flower.webp" 
+                alt="Steel Flower" 
+                className="w-full h-full object-contain drop-shadow-2xl"
+                style={{ 
+                  filter: `drop-shadow(0 20px 40px ${theme === 'dark' ? 'rgba(147, 51, 234, 0.5)' : 'rgba(99, 102, 241, 0.5)'})`
+                }}
+              />
             </div>
           </motion.div>
-        </AnimatePresence>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className={`text-xs sm:text-sm tracking-[0.3em] uppercase mb-3 sm:mb-4 ${
+              theme === 'dark' ? 'text-purple-300' : 'text-purple-700'
+            }`}
+          >
+            TECH STACK & TOOLS
+          </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 sm:mb-8 px-4"
+          >
+            <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Full Stack </span>
+            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent italic">
+              Tools
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className={`text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4 ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            }`}
+          >
+            A comprehensive collection of technologies and tools I use to build modern, scalable web applications.
+          </motion.p>
+        </motion.div>
+
+        {/* Tech Icons Grid */}
+        <div
+          ref={skillsRef}
+          className="relative flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-5 mb-40 sm:mb-48 md:mb-56 min-h-[300px] sm:min-h-[400px] px-4"
+        >
+          {techIcons.map((tech, index) => {
+            const scatterPos = generateScatterPosition(index);
+            return (
+              <motion.div
+                key={tech.name}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={
+                  isScattered
+                    ? {
+                        opacity: 0.3,
+                        scale: 0.5,
+                        x: scatterPos.x,
+                        y: scatterPos.y,
+                        rotate: scatterPos.rotate,
+                      }
+                    : {
+                        opacity: 1,
+                        scale: 1,
+                        x: 0,
+                        y: 0,
+                        rotate: 0,
+                      }
+                }
+                transition={{
+                  duration: 0.8,
+                  delay: isScattered ? index * 0.02 : index * 0.03,
+                  type: 'spring',
+                  stiffness: 100,
+                }}
+                whileHover={{ 
+                  scale: 1.2, 
+                  rotate: 5,
+                  y: -5,
+                  transition: { type: 'spring', stiffness: 300 }
+                }}
+                className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br ${tech.color} flex items-center justify-center text-xl sm:text-2xl md:text-3xl shadow-lg cursor-pointer relative group backdrop-blur-sm border ${
+                  theme === 'dark' ? 'border-white/20' : 'border-white/30'
+                } hover:shadow-2xl hover:scale-105 transition-all duration-300`}
+              >
+                <div className={theme === 'dark' ? 'text-white' : 'text-white'}>
+                  {tech.icon}
+                </div>
+                <div className={`absolute -bottom-12 left-1/2 -translate-x-1/2 text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap z-50 shadow-2xl ${
+                  theme === 'dark' 
+                    ? 'bg-gray-900/95 text-white border border-gray-700 backdrop-blur-sm' 
+                    : 'bg-white/95 text-gray-900 border border-gray-200 backdrop-blur-sm'
+                }`}>
+                  {tech.name}
+                  <div className={`absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 ${
+                    theme === 'dark' ? 'bg-gray-900/95' : 'bg-white/95'
+                  }`}></div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Ribbons - Full width, no padding */}
+        <div className="mt-20 sm:mt-24 md:mt-28 w-full">
+          {/* Top Ribbon - Full width with negative margin to extend beyond viewport */}
+          <div className="relative w-[400%] left-[-150%]">
+            <div
+              className={`w-full h-12 sm:h-14 md:h-16 flex items-center overflow-hidden shadow-2xl mb-4 backdrop-blur-sm ${
+                theme === 'dark'
+                  ? 'bg-gradient-to-r from-purple-800/95 via-pink-700/95 to-purple-800/95' 
+                  : 'bg-gradient-to-r from-purple-700 via-pink-600 to-purple-700'
+              } border-t ${theme === 'dark' ? 'border-purple-500/30' : 'border-purple-400/30'} border-b ${theme === 'dark' ? 'border-purple-500/30' : 'border-purple-400/30'}`}
+              style={{
+                transform: 'rotateZ(-3deg) rotateY(-2deg)',
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              <motion.div
+                className="flex whitespace-nowrap"
+                animate={{ x: ['0%', '-50%'] }}
+                transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+              >
+                {[...ribbonTexts[0], ...ribbonTexts[0], ...ribbonTexts[0], ...ribbonTexts[0]].map((text, i) => (
+                  <span key={i} className="text-white font-bold text-sm sm:text-base md:text-lg mx-4 sm:mx-6 md:mx-8 tracking-wider flex items-center">
+                    <span className="mr-2 text-lg">✨</span> {text} <span className="text-white/70 mx-2">•</span>
+                  </span>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Bottom Ribbon - Full width with negative margin to extend beyond viewport */}
+          <div className="relative w-[400%] left-[-150%]">
+            <div
+              className={`w-full h-12 sm:h-14 md:h-16 flex items-center overflow-hidden shadow-2xl backdrop-blur-sm ${
+                theme === 'dark'
+                  ? 'bg-gradient-to-r from-indigo-800/95 via-blue-700/95 to-indigo-800/95' 
+                  : 'bg-gradient-to-r from-indigo-700 via-blue-600 to-indigo-700'
+              } border-t ${theme === 'dark' ? 'border-blue-500/30' : 'border-blue-400/30'} border-b ${theme === 'dark' ? 'border-blue-500/30' : 'border-blue-400/30'}`}
+              style={{
+                transform: 'rotateZ(3deg) rotateY(2deg)',
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              <motion.div
+                className="flex whitespace-nowrap"
+                animate={{ x: ['-50%', '0%'] }}
+                transition={{ duration: 35, repeat: Infinity, ease: 'linear' }}
+              >
+                {[...ribbonTexts[1], ...ribbonTexts[1], ...ribbonTexts[1], ...ribbonTexts[1]].map((text, i) => (
+                  <span key={i} className="text-white font-bold text-sm sm:text-base md:text-lg mx-4 sm:mx-6 md:mx-8 tracking-wider flex items-center">
+                    <span className="mr-2 text-lg">⚡</span> {text} <span className="text-white/70 mx-2">•</span>
+                  </span>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
