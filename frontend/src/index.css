@@ -339,3 +339,16 @@ img[loading="lazy"].loaded {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* View transition defaults for theme switch */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Dark mode baseline using class on <html> */
+html.dark body {
+  background: #000 !important;
+  color: #e5e7eb;
+}

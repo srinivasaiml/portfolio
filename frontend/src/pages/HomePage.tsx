@@ -14,6 +14,7 @@ import Education from '../components/Education';
 import Certificates from '../components/Certificates';
 import Contact from '../components/Contact';
 import BackgroundAnimation from '../components/BackgroundAnimation';
+import Footer from '../components/Footer';
 
 
 function HomePage() {
@@ -47,7 +48,7 @@ function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100"
+            className="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:bg-black dark:bg-none"
           >
    
             <FloatingElements />
@@ -64,6 +65,8 @@ function HomePage() {
               <Education />
               <Certificates />
               <Contact />
+              <Footer />
+              
             </div>
             <motion.button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

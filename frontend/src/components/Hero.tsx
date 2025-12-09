@@ -1,9 +1,11 @@
 // @ts-nocheck
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Download, ArrowRight } from 'lucide-react';
+import { useTheme } from '../components/ThemeContext'; // Adjust path if needed
 
 const Hero = () => {
   const canvasRef = useRef(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -13,8 +15,11 @@ const Hero = () => {
     if (!ctx) return;
 
     // Set canvas dimensions
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
 
     const gridSize = 50;
     const dots = [];
@@ -27,6 +32,7 @@ const Hero = () => {
     }
 
     let time = 0;
+    let animationFrameId;
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -38,35 +44,43 @@ const Hero = () => {
 
         ctx.beginPath();
         ctx.arc(dot.x, currentY, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        
+        // Adjust dot color based on theme
+        // Dark dots for Light Mode (to see against the gradient)
+        // Light dots for Dark Mode
+        ctx.fillStyle = theme === 'dark' 
+          ? 'rgba(255, 255, 255, 0.15)' 
+          : 'rgba(0, 0, 0, 0.1)'; 
         ctx.fill();
       });
 
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     };
 
     animate();
 
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    window.addEventListener('resize', resizeCanvas);
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationFrameId);
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [theme]); // Re-run when theme changes
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Gradient Background with Grid Pattern */}
+    <section 
+      id="home" 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-500"
+    >
+      {/* ================= LIGHT MODE BACKGROUND ================= */}
+      {/* This block is hidden in dark mode */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 dark:hidden"
         style={{
           background:
             'linear-gradient(to bottom, #fff 0%, #fff 40%, rgba(255, 255, 255, 0) 100%), linear-gradient(to right, #0ed2da, #5f29c7)',
         }}
       >
-        {/* Vertical Grid Lines */}
+        {/* Vertical Grid Lines for Light Mode */}
         <div
           className="absolute inset-0"
           style={{
@@ -80,34 +94,43 @@ const Hero = () => {
         />
       </div>
 
+      {/* ================= DARK MODE BACKGROUND ================= */}
+      {/* This block is hidden in light mode */}
+      <div className="absolute inset-0 pointer-events-none hidden dark:block">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-900/20 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-900/20 rounded-full blur-[100px]" />
+      </div>
+
+      {/* Canvas Layer */}
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
 
-      {/* Additional overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent pointer-events-none" />
+      {/* Light Mode Overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent pointer-events-none dark:hidden" />
 
+      {/* Content */}
       <div className="relative z-10 text-center max-w-6xl mx-auto px-6">
         <div className="mb-6">
-          <div className="inline-block mb-4 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-slate-200">
-            <span className="text-sm text-slate-800 font-medium tracking-wide">
+          <div className="inline-block mb-4 px-4 py-2 bg-white/95 dark:bg-white/10 backdrop-blur-sm rounded-full shadow-lg border border-slate-200 dark:border-white/10">
+            <span className="text-sm text-slate-800 dark:text-slate-200 font-medium tracking-wide">
               Frontend Developer & Designer
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight tracking-tight text-slate-900">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight tracking-tight text-slate-900 dark:text-white transition-colors">
             Patchipala Srinivas
           </h1>
 
-          <div className="text-2xl md:text-3xl lg:text-4xl text-slate-700 mb-8 font-light">
+          <div className="text-2xl md:text-3xl lg:text-4xl text-slate-700 dark:text-slate-300 mb-8 font-light">
             <TypewriterText />
           </div>
         </div>
 
-        <p className="text-lg md:text-xl text-slate-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed">
           Creating seamless digital experiences through clean code, thoughtful design, and attention to detail.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <button className="group px-8 py-4 bg-slate-900 text-white rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 hover:bg-slate-800 shadow-xl hover:shadow-2xl hover:scale-105">
+          <button className="group px-8 py-4 bg-slate-900 dark:bg-blue-600 text-white rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 hover:bg-slate-800 dark:hover:bg-blue-500 shadow-xl hover:shadow-2xl hover:scale-105">
             <span>View My Work</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
           </button>
@@ -115,13 +138,13 @@ const Hero = () => {
           <button
             onClick={() => {
               const link = document.createElement('a');
-              link.href = '/Srinivas_Patchipala_2026.pdf'; // Path relative to public folder
-              link.download = 'Srinivas_Patchipala_2026.pdf'; // Name for the downloaded file
+              link.href = '/path/to/resume.pdf'; 
+              link.download = 'Patchipala_Srinivas_Resume.pdf';
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
             }}
-            className="group px-8 py-4 bg-white border-2 border-slate-300 text-slate-900 rounded-lg font-medium hover:bg-slate-50 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl"
+            className="group px-8 py-4 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl"
           >
             <Download className="w-5 h-5" />
             <span>Download Resume</span>
@@ -129,7 +152,7 @@ const Hero = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="flex justify-center divide-x divide-slate-300 mt-20">
+        <div className="flex justify-center divide-x divide-slate-300 dark:divide-slate-700 mt-20">
           {[
             { number: '10+', label: 'Projects' },
             { number: '5+', label: 'Certificates' },
@@ -139,10 +162,10 @@ const Hero = () => {
               key={stat.label}
               className="px-8 text-center hover:scale-105 transition-transform duration-300"
             >
-              <div className="text-3xl md:text-4xl font-bold text-slate-900 mb-1">
+              <div className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-1">
                 {stat.number}
               </div>
-              <div className="text-sm text-slate-600 font-medium">{stat.label}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -155,7 +178,7 @@ const Hero = () => {
           document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
         }
       >
-        <ChevronDown className="text-slate-600 w-6 h-6" />
+        <ChevronDown className="text-slate-600 dark:text-slate-300 w-6 h-6" />
       </div>
     </section>
   );
@@ -164,14 +187,14 @@ const Hero = () => {
 // Typewriter text animation component
 const TypewriterText = () => {
   const texts = [
-    'Designing Interactive Frontends',
-    'Building Powerful Backends',
-    'Developing Full Stack Applications',
-    'Creating Seamless User Experiences',
+    'Building Digital Products',
+    'Crafting User Experiences',
+    'Solving Problems',
+    'Creating Interfaces',
   ];
-  const [currentText, setCurrentText] = React.useState('');
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [currentText, setCurrentText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
