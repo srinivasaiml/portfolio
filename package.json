@@ -26,6 +26,7 @@
   "author": "Patchipala Srinivas",
   "license": "MIT",
   "dependencies": {
-    "express-validator": "^7.2.1"
+    "express-validator": "^7.2.1",
+    "framer-motion": "^12.23.25"
   }
 }

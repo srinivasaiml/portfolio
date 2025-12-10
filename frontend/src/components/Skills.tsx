@@ -1,33 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import{ useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../components/ThemeContext';
 import { 
   FaReact, FaNodeJs, FaPython, FaJs, FaHtml5, FaCss3Alt, FaGitAlt, 
   FaGithub, FaAws, FaDocker, FaLinux, FaFigma, FaSass,
-  FaDatabase, FaServer, FaCode, FaBootstrap,
-  FaGoogle, FaMicrosoft, FaApple, FaAndroid, FaWindows,
-  FaNpm, FaJenkins, FaTrello, FaSlack, FaJira,
-  FaAdobe, FaUnity, FaSpotify, FaPaypal, FaStripe,
-  FaBitcoin, FaLinkedin, FaTwitter, FaInstagram, FaFacebook, FaYoutube
+  FaDatabase
 } from 'react-icons/fa';
 import { 
   SiTypescript, SiNextdotjs, SiTailwindcss, SiDjango, 
   SiExpress, SiFastapi, SiMongodb, SiMysql, SiPostgresql, 
-  SiRedis, SiPrisma, SiVercel, SiVite, SiJest, SiStorybook, 
-  SiD3Dotjs, SiFramer, SiGraphql, SiSocketdotio, SiWebpack,
-  SiEthereum, SiSolidity, SiStripe as SiStripeIcon, SiShopify, 
-  SiWordpress, SiSquarespace, SiWebflow, SiNotion, SiAirtable,
-  SiJira as SiJiraIcon, SiGitlab, SiAzuredevops, SiCircleci, 
-  SiKubernetes, SiTerraform, SiAnsible, SiPrometheus, SiGrafana,
-  SiElastic, SiNginx, SiCloudflare, SiDigitalocean, SiHeroku,
-  SiNetlify, SiFirebase, SiSupabase, SiGraphql as SiGraphqlIcon,
-  SiSwagger, SiPostman, SiVscode, SiVisualstudio,
-  SiNodedotjs, SiNestjs, SiSvelte, SiQwik, SiAstro,
-  SiGatsby, SiNuxtdotjs, SiVuedotjs, SiAngular, SiPreact,
-  SiGoogleanalytics, SiGoogletagmanager, SiBrave,
-  SiFirefox, SiChromium, SiEdge, SiRaspberrypi, SiArduino,
-  SiNvidia, SiAmd, SiIntel, SiSamsung, SiSony
+  SiRedis, SiPrisma, SiVercel, SiVite, SiJest, SiFramer, SiGraphql, SiWebpack,
+  SiKubernetes, SiTerraform, SiPrometheus, SiGrafana,
+  SiDigitalocean, SiNetlify, SiFirebase, SiSupabase, 
+  SiSvelte, SiVuedotjs, SiAngular, SiGoogleanalytics
 } from 'react-icons/si';
+import { SiGraphql as SiNestjs } from 'react-icons/si';
 
 const Skills = () => {
   const [isScattered, setIsScattered] = useState(true);
@@ -76,14 +63,13 @@ const Skills = () => {
     { icon: <FaLinux />, name: 'Linux', color: 'from-yellow-400 to-black' },
     { icon: <SiKubernetes />, name: 'Kubernetes', color: 'from-blue-500 to-blue-700' },
     { icon: <SiTerraform />, name: 'Terraform', color: 'from-purple-500 to-purple-700' },
-    { icon: <SiAnsible />, name: 'Ansible', color: 'from-red-500 to-red-800' },
+  
     
     // Tools & Platforms
     { icon: <FaGithub />, name: 'GitHub', color: 'from-gray-700 to-black' },
     { icon: <SiVercel />, name: 'Vercel', color: 'from-black to-gray-800' },
     { icon: <SiVite />, name: 'Vite', color: 'from-purple-500 to-yellow-400' },
     { icon: <SiJest />, name: 'Jest', color: 'from-red-500 to-orange-500' },
-    { icon: <SiStorybook />, name: 'Storybook', color: 'from-pink-500 to-purple-600' },
     { icon: <SiFramer />, name: 'Framer Motion', color: 'from-pink-500 to-purple-500' },
     { icon: <SiWebpack />, name: 'Webpack', color: 'from-blue-500 to-blue-800' },
     { icon: <SiGraphql />, name: 'GraphQL', color: 'from-pink-500 to-purple-600' },
@@ -105,40 +91,71 @@ const Skills = () => {
     ['IMPACTFUL', 'ACCESSIBLE', 'RESPONSIVE', 'DYNAMIC', 'SCALABLE', 'SEARCH OPTIMIZED', 'INTERACTIVE', 'SECURE', 'RELIABLE', 'ENGAGING']
   ];
 
-  useEffect(() => {
+useEffect(() => {
+    let ticking = false;
+    let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
+
     const handleScroll = () => {
-      if (!skillsRef.current) return;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!skillsRef.current) {
+            ticking = false;
+            return;
+          }
 
-      const rect = skillsRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight && rect.bottom > 0;
-      const currentScrollY = window.scrollY;
+          const rect = (skillsRef.current as HTMLElement).getBoundingClientRect();
+          const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+          const currentScrollY = window.scrollY;
+          const scrollDelta = Math.abs(currentScrollY - lastScrollY.current);
 
-      // Rotate image based on scroll
-      setImageRotation(currentScrollY * 0.2);
+          // Rotate image based on scroll
+          setImageRotation(currentScrollY * 0.2);
 
-      if (isInView && !hasAnimated) {
-        setHasAnimated(true);
-        setTimeout(() => setIsScattered(false), 300);
+          // Initial animation when first entering view
+          if (isInView && !hasAnimated) {
+            setHasAnimated(true);
+            setTimeout(() => setIsScattered(false), 300);
+          }
+
+          // Smooth scatter/gather based on scroll direction with threshold
+          if (hasAnimated && isInView && scrollDelta > 5) {
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+            
+            const scrollingDown = currentScrollY > lastScrollY.current;
+            
+            // Only change state if scroll is significant
+            if (scrollingDown && isScattered) {
+              setIsScattered(false);
+            } else if (!scrollingDown && !isScattered) {
+              setIsScattered(true);
+            }
+            
+            // Debounce: settle to gathered state after scroll stops
+            scrollTimeout = setTimeout(() => {
+              if (!isScattered) {
+                setIsScattered(false);
+              }
+            }, 150);
+          }
+
+          lastScrollY.current = currentScrollY;
+          ticking = false;
+        });
+
+        ticking = true;
       }
-
-      if (hasAnimated && isInView) {
-        if (currentScrollY < lastScrollY.current && !isScattered) {
-          setIsScattered(true);
-        } else if (currentScrollY > lastScrollY.current && isScattered) {
-          setIsScattered(false);
-        }
-      }
-
-      lastScrollY.current = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+    };
   }, [hasAnimated, isScattered]);
 
-  const generateScatterPosition = (index) => {
+  const generateScatterPosition = (index: number) => {
     const angle = (index * 137.5 + Math.random() * 30) * (Math.PI / 180);
     const distance = window.innerWidth < 768 ? 150 + Math.random() * 200 : 300 + Math.random() * 400;
     return {
