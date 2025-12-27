@@ -159,6 +159,8 @@ const GlowingEffect = memo(
 GlowingEffect.displayName = "GlowingEffect";
 
 const About = () => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
   const skills = [
     {
       icon: <Code className="w-8 h-8" />,
@@ -229,17 +231,20 @@ const About = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 100 }}
+          initial={{ opacity: 0, y: isMobile ? 20 : 100 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          viewport={{ once: true }}
+          transition={{ 
+            duration: isMobile ? 0.4 : 1, 
+            ease: isMobile ? [0.25, 0.1, 0.25, 1] : "easeOut" 
+          }}
+          viewport={{ once: true, margin: isMobile ? "-50px" : "0px" }}
           className="text-center mb-20"
         >
           <motion.div
-            initial={{ scale: 0 }}
+            initial={{ scale: isMobile ? 1 : 0 }}
             whileInView={{ scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
+            transition={{ duration: isMobile ? 0.3 : 0.8, delay: isMobile ? 0 : 0.2 }}
+            viewport={{ once: true, margin: isMobile ? "-50px" : "0px" }}
             className="inline-block p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-400/10 dark:to-purple-400/10 rounded-2xl mb-6"
           >
             <User className="w-12 h-12 text-blue-600 dark:text-blue-400" />
@@ -251,8 +256,8 @@ const About = () => {
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
+            transition={{ duration: isMobile ? 0.3 : 0.8, delay: isMobile ? 0 : 0.4 }}
+            viewport={{ once: true, margin: isMobile ? "-50px" : "0px" }}
             className="text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto font-light"
           >
             Passionate about creating digital experiences that make a difference
@@ -261,25 +266,30 @@ const About = () => {
 
         <div className="grid lg:grid-cols-2 gap-20 items-center mb-20">
           <motion.div
-            initial={{ opacity: 0, x: -100 }}
+            initial={{ opacity: 0, x: isMobile ? 0 : -100 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            viewport={{ once: true }}
+            transition={{ 
+              duration: isMobile ? 0.4 : 1, 
+              ease: isMobile ? [0.25, 0.1, 0.25, 1] : "easeOut" 
+            }}
+            viewport={{ once: true, margin: isMobile ? "-30px" : "0px" }}
             className="space-y-8"
           >
             <div className="relative bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-white/20 dark:border-white/10 hover:shadow-3xl transition-all duration-500">
-              {/* Enhanced main card glow */}
-              <GlowingEffect 
-                  proximity={250}      // Increased from 200
-                  blur={0}            // Increased from 10
-                  spread={50}         // Increased from 40
-                  borderWidth={4}      // Increased from 2
-              />
+              {/* Enhanced main card glow - disabled on mobile */}
+              {!isMobile && (
+                <GlowingEffect 
+                  proximity={250}
+                  blur={0}
+                  spread={50}
+                  borderWidth={4}
+                />
+              )}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: isMobile ? 10 : 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                viewport={{ once: true }}
+                transition={{ duration: isMobile ? 0.3 : 0.8, delay: isMobile ? 0 : 0.2 }}
+                viewport={{ once: true, margin: isMobile ? "-30px" : "0px" }}
               >
                 <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center">
                   <span className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mr-3"></span>
@@ -295,26 +305,28 @@ const About = () => {
                 </p>
               </motion.div>
 
-              {/* Enhanced Stats glow */}
+              {/* Enhanced Stats glow - disabled on mobile */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: isMobile ? 10 : 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                viewport={{ once: true }}
+                transition={{ duration: isMobile ? 0.3 : 0.8, delay: isMobile ? 0 : 0.4 }}
+                viewport={{ once: true, margin: isMobile ? "-30px" : "0px" }}
                 className="grid grid-cols-3 gap-6 mb-8"
               >
                 {stats.map((stat) => (
                   <motion.div
                     key={stat.label}
-                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileHover={isMobile ? {} : { scale: 1.05, y: -5 }}
                     className="relative text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-700 rounded-xl border border-white/50 dark:border-white/5"
                   >
-                    <GlowingEffect 
-                      proximity={250}      // Increased from 150
-                      blur={15}            // Increased from 8
-                      spread={60}          // Increased from 30
-                      borderWidth={3}      // Increased from 1.5
-                    />
+                    {!isMobile && (
+                      <GlowingEffect 
+                        proximity={250}
+                        blur={15}
+                        spread={60}
+                        borderWidth={3}
+                      />
+                    )}
                     <div className="text-blue-600 dark:text-blue-400 mb-2 flex justify-center">{stat.icon}</div>
                     <div className="text-2xl font-bold text-gray-800 dark:text-white">{stat.value}</div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</div>
@@ -323,7 +335,7 @@ const About = () => {
               </motion.div>
 
               <motion.button
-                whileHover={{ 
+                whileHover={isMobile ? {} : { 
                   scale: 1.05, 
                   boxShadow: "0 20px 40px rgba(59, 130, 246, 0.3)",
                   y: -3
@@ -339,20 +351,27 @@ const About = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 100 }}
+            initial={{ opacity: 0, x: isMobile ? 0 : 100 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
-            viewport={{ once: true }}
+            transition={{ 
+              duration: isMobile ? 0.4 : 1, 
+              ease: isMobile ? [0.25, 0.1, 0.25, 1] : "easeOut", 
+              delay: isMobile ? 0 : 0.3 
+            }}
+            viewport={{ once: true, margin: isMobile ? "-30px" : "0px" }}
             className="grid grid-cols-1 sm:grid-cols-2 gap-8"
           >
             {skills.map((skill, index) => (
               <motion.div
                 key={skill.title}
-                initial={{ opacity: 0, y: 50, rotateY: -30 }}
+                initial={{ opacity: 0, y: isMobile ? 20 : 50, rotateY: isMobile ? 0 : -30 }}
                 whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                whileHover={{ 
+                transition={{ 
+                  duration: isMobile ? 0.3 : 0.8, 
+                  delay: isMobile ? 0 : index * 0.2 
+                }}
+                viewport={{ once: true, margin: isMobile ? "-30px" : "0px" }}
+                whileHover={isMobile ? {} : { 
                   scale: 1.05,
                   rotateY: 10,
                   boxShadow: "0 25px 50px rgba(0, 0, 0, 0.15)",
@@ -360,15 +379,17 @@ const About = () => {
                 }}
                 className="relative bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/20 dark:border-white/10 transform-gpu hover:shadow-2xl transition-all duration-500 group"
               >
-                {/* Enhanced skills cards glow */}
-                <GlowingEffect 
-                  proximity={250}      // Increased from 200
-                  blur={0}            // Increased from 10
-                  spread={50}         // Increased from 40
-                  borderWidth={4}      // Increased from 2
-                />
+                {/* Enhanced skills cards glow - disabled on mobile */}
+                {!isMobile && (
+                  <GlowingEffect 
+                    proximity={250}
+                    blur={0}
+                    spread={50}
+                    borderWidth={4}
+                  />
+                )}
                 <motion.div
-                  whileHover={{ rotate: 360, scale: 1.2 }}
+                  whileHover={isMobile ? {} : { rotate: 360, scale: 1.2 }}
                   transition={{ duration: 0.6 }}
                   className={`inline-flex p-4 bg-gradient-to-br ${skill.color} text-white rounded-xl mb-6 shadow-lg`}
                 >
@@ -385,26 +406,31 @@ const About = () => {
           </motion.div>
         </div>
 
-        {/* Enhanced Philosophy Section glow */}
+        {/* Enhanced Philosophy Section glow - disabled on mobile */}
         <motion.div
-          initial={{ opacity: 0, y: 100 }}
+          initial={{ opacity: 0, y: isMobile ? 20 : 100 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          viewport={{ once: true }}
+          transition={{ 
+            duration: isMobile ? 0.4 : 1, 
+            ease: isMobile ? [0.25, 0.1, 0.25, 1] : "easeOut" 
+          }}
+          viewport={{ once: true, margin: isMobile ? "-30px" : "0px" }}
           className="text-center"
         >
           <div className="relative max-w-4xl mx-auto bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20 backdrop-blur-xl rounded-3xl p-12 shadow-2xl border border-white/20 dark:border-white/10">
-            <GlowingEffect 
-              proximity={400}      // Increased from 200
-              blur={30}            // Increased from 12
-              spread={120}         // Increased from 50
-              borderWidth={6}      // Increased from 2
-            />
+            {!isMobile && (
+              <GlowingEffect 
+                proximity={400}
+                blur={30}
+                spread={120}
+                borderWidth={6}
+              />
+            )}
             <motion.div
-              initial={{ scale: 0 }}
+              initial={{ scale: isMobile ? 1 : 0 }}
               whileInView={{ scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
+              transition={{ duration: isMobile ? 0.3 : 0.8, delay: isMobile ? 0 : 0.2 }}
+              viewport={{ once: true, margin: isMobile ? "-30px" : "0px" }}
               className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-8 shadow-xl"
             >
               "
