@@ -60,7 +60,7 @@ const Navbar = () => {
       limelight.style.left = `${newLeft}px`;
 
       if (!isReady) {
-        setTimeout(() => setIsReady(true), 50);
+        setTimeout(() => setIsReady, 50);
       }
     }
   }, [activeSection, isReady, navLinks.length]);
@@ -74,6 +74,17 @@ const Navbar = () => {
   return (
     <>
       <style>{`
+        /* Signature Font Import */
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@400;500;600;700&family=Great+Vibes&family=Allura&family=Sacramento&display=swap');
+        
+        .font-signature {
+          font-family: 'Great Vibes', cursive;
+        }
+        
+        .font-signature-alt {
+          font-family: 'Allura', cursive;
+        }
+
         /* --- Limelight Styles --- */
         .limelight-spotlight {
           box-shadow: 0 50px 30px rgba(59, 130, 246, 0.5);
@@ -85,10 +96,10 @@ const Navbar = () => {
         /* --- Airplane Switch Styles --- */
         .plane-switch {
           --dot: #fff;
-          --street: #6B6D76; /* Dark grey for "off" state */
+          --street: #6B6D76;
           --street-line: #A8AAB4;
           --street-line-mid: #C0C2C8;
-          --sky-1: #60A7FA; /* Blue for "on" state */
+          --sky-1: #60A7FA;
           --sky-2: #2F8EFC;
           --light-1: rgba(255, 233, 0, 1);
           --light-2: rgba(255, 233, 0, .3);
@@ -100,16 +111,14 @@ const Navbar = () => {
           display: none;
         }
 
-        /* The container div */
         .plane-switch .switch-body {
           -webkit-mask-image: -webkit-radial-gradient(white, black);
           position: relative;
           overflow: hidden;
-          width: 60px;  /* Slightly wider for visibility */
-          height: 30px; /* Slightly taller */
+          width: 60px;
+          height: 30px;
           padding: 1px;
           border-radius: 15px;
-          /* Background transition from Street (Dark) to Sky (Light) */
           background: linear-gradient(90deg, var(--street) 0%, var(--street) 25%, var(--sky-1) 75%, var(--sky-2) 100%) left var(--p, 0%) top 0;
           background-position-x: var(--p, 0%);
           background-size: 400% auto;
@@ -117,7 +126,6 @@ const Navbar = () => {
           box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* Runway lines / Lights */
         .plane-switch .switch-body:before, .plane-switch .switch-body:after {
           content: "";
           display: block;
@@ -199,7 +207,6 @@ const Navbar = () => {
           opacity: var(--co-2, 0);
         }
 
-        /* The Plane Icon Container */
         .plane-switch .switch-body .plane-icon {
           display: table;
           position: relative;
@@ -219,7 +226,6 @@ const Navbar = () => {
           transition: color 0.6s;
         }
 
-        /* Checked State (Light Mode / Sky) */
         .plane-switch input:checked + .switch-body {
           --p: 100%;
           --x: 30px;
@@ -270,13 +276,27 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
+            {/* Signature Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent cursor-pointer"
+              className="cursor-pointer group"
               onClick={() => handleNavClick('#home')}
             >
-              &lt; PSrinivas /&gt;
+              <div className="relative">
+                {/* Main Signature Text */}
+                <h1 className="text-2xl md:text-3xl font-signature bg-gradient-to-r from-orange-600 via-pink-600 to-violet-600 dark:from-orange-400 dark:via-pink-400 dark:to-violet-400 bg-clip-text text-transparent">
+                  P. Srinivas
+                </h1>
+                
+                {/* Subtle Underline Effect */}
+                <motion.div
+                  className="h-0.5 bg-gradient-to-r from-orange-500 via-pink-500 to-violet-500 origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -313,11 +333,11 @@ const Navbar = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* --- NEW AIRPLANE TOGGLE SWITCH --- */}
+              {/* Airplane Toggle Switch */}
               <label className="plane-switch">
                 <input 
                   type="checkbox" 
-                  checked={theme === 'light'} // Checked = Sky/Light Mode, Unchecked = Street/Dark Mode
+                  checked={theme === 'light'}
                   onChange={toggleTheme}
                 />
                 <div className="switch-body">
