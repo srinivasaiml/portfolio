@@ -50,12 +50,12 @@ function HomePage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:bg-black dark:bg-none"
           >
-   
+
             <FloatingElements />
             <ScrollProgress />
             <div className="relative z-10">
               <Navbar />
-              <BackgroundAnimation/>
+              <BackgroundAnimation />
               <Hero />
 
               <About />
@@ -66,11 +66,19 @@ function HomePage() {
               <Certificates />
               <Contact />
               <Footer />
-              
+
             </div>
             <motion.button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="fixed bottom-8 right-8 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-2xl z-50"
+              onClick={() => {
+                // @ts-ignore
+                if (window.lenis) {
+                  // @ts-ignore
+                  window.lenis.scrollTo(0);
+                } else {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+              className="fixed bottom-8 right-8 p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-2xl z-50 hover:scale-110 active:scale-95 transition-transform"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
             </motion.button>

@@ -11,11 +11,12 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.5,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
+      wheelMultiplier: 1.2,
+      touchMultiplier: 1.5,
+      lerp: 0.1,
     });
 
     function raf(time: number) {
@@ -28,8 +29,13 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
     // FIX: Scroll to top immediately when route changes
     lenis.scrollTo(0, { immediate: true });
 
+    // @ts-ignore
+    window.lenis = lenis;
+
     return () => {
       lenis.destroy();
+      // @ts-ignore
+      window.lenis = null;
     };
   }, [location.pathname]); // Re-run or trigger scroll reset when path changes
 
