@@ -7,9 +7,9 @@ import { useTheme } from './ThemeProvider';
 import { Menu, X } from 'lucide-react';
 import { Dancing_Script } from 'next/font/google';
 
-const dancingScript = Dancing_Script({ 
-  subsets: ["latin"], 
-  weight: ["400", "700"], 
+const dancingScript = Dancing_Script({
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const Navbar = () => {
@@ -49,11 +49,11 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-      
+
       // Determine active section based on scroll position
       const sections = navItems.map(item => item.path.substring(1));
       let currentSection = sections[0];
-      
+
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
@@ -65,7 +65,7 @@ const Navbar = () => {
       }
       setActivePath(`#${currentSection}`);
     };
-    
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -249,7 +249,7 @@ const Navbar = () => {
                       setIsOpen(false);
                     }}
                     className={`text-left px-4 py-3 rounded-2xl text-xl font-semibold transition-all ${activePath === item.path
-                        ? 'bg-linear-to-r from-orange-500/10 to-violet-500/10 dark:from-orange-500/20 dark:to-violet-500/20 text-violet-600 dark:text-violet-400'
+                      ? 'bg-linear-to-r from-orange-500/10 to-violet-500/10 dark:from-orange-500/20 dark:to-violet-500/20 text-violet-600 dark:text-violet-400'
                       : 'text-foreground/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground'
                       }`}
                   >

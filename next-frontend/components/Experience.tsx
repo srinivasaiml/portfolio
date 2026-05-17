@@ -1,149 +1,189 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Timeline } from './ui/timeline';
-import { Briefcase, Trophy, Flame } from 'lucide-react';
-import { useTheme } from './ThemeProvider';
+import React, { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Briefcase, Trophy, Flame, MapPin, Calendar, ArrowUpRight } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
+import { cn } from "@/lib/utils";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Experience = () => {
     const { theme } = useTheme();
+    const container = useRef(null);
+    const cardsRef = useRef<HTMLDivElement[]>([]);
+
     const experiences = [
         {
-            title: '2025',
+            year: '2025',
             company: 'Aditya University',
             event: 'Software Engineer Intern',
             type: 'internship',
             duration: 'May 2025 – Jun 2025',
             location: 'Smart Library Seat Management System',
-            description: 'Led end-to-end development of a Smart Library Seat Management System at Aditya University. Engineered a full-stack seat reservation platform using Node.js, Express, and MongoDB as the backbone, with a responsive React frontend. Designed real-time seat tracking with WebSockets to reflect live availability across floors. Implemented QR-code-based check-in and optimized the seat allocation algorithm, improving overall seat utilization by 25% within the first month of deployment.',
-            highlights: ['Real-time seat tracking via WebSockets', 'QR-code check-in integration', '25% improvement in seat utilization', 'Responsive React dashboard'],
-            skills: ['Node.js', 'Express', 'MongoDB', 'React', 'WebSockets', 'JavaScript'],
-            gradient: 'from-violet-600 to-fuchsia-600',
+            description: 'Led end-to-end development of a Smart Library Seat Management System. Engineered a full-stack seat reservation platform using Node.js, Express, and MongoDB.',
+            highlights: ['Real-time seat tracking via WebSockets', 'QR-code check-in integration', '25% improvement in seat utilization'],
+            skills: ['Node.js', 'Express', 'MongoDB', 'React', 'WebSockets'],
+            icon: Briefcase,
+            color: "bg-indigo-600 dark:bg-indigo-950"
         },
         {
-            title: '2024',
+            year: '2024',
             company: 'proTreX',
             event: 'AI/ML Workshop',
             type: 'workshop',
             duration: 'Aug 2024',
             location: 'Tech Conference, Hyderabad',
-            description: 'Participated in an intensive AI/ML workshop organized by proTreX, covering the latest advancements in deep learning, large language models, and computer vision. Worked on hands-on sessions involving model fine-tuning, neural network architecture design, and real-world AI application deployment. Collaborated with industry engineers to understand production AI pipelines and MLOps best practices.',
-            highlights: ['Deep learning & LLM fundamentals', 'Computer vision hands-on sessions', 'MLOps pipeline design', 'Industry mentorship & networking'],
+            description: 'Intensive AI/ML workshop covering deep learning, LLMs, and computer vision. Hands-on sessions involving model fine-tuning and neural network design.',
+            highlights: ['Deep learning & LLM fundamentals', 'Computer vision hands-on sessions', 'MLOps pipeline design'],
             skills: ['Machine Learning', 'Neural Networks', 'Computer Vision', 'AI', 'Python'],
-            gradient: 'from-pink-600 to-red-600',
+            icon: Flame,
+            color: "bg-zinc-900 dark:bg-black"
         },
         {
-            title: '2023',
+            year: '2023',
             company: 'Veda Symposium',
             event: 'Treasure Hunt Winner',
             type: 'achievement',
             duration: 'Oct 2023',
             location: 'National Level — Inter-College',
-            description: 'Secured 1st place in the national-level technical Treasure Hunt at Veda Symposium 2023. The competition involved multilayered problem sets spanning data structures, cryptographic puzzles, and real-time coding challenges under strict time pressure. Coordinated effectively with the team to decode clues, distribute tasks strategically, and outpace competing teams across 5 elimination rounds.',
-            highlights: ['1st place — national level', '5 elimination rounds completed', 'Cryptographic & DSA challenges', 'Team coordination under pressure'],
-            skills: ['Problem Solving', 'Data Structures', 'Algorithms', 'Cryptography', 'Teamwork'],
-            gradient: 'from-emerald-600 to-teal-600',
+            description: 'Secured 1st place in the national-level technical Treasure Hunt. multilayered problem sets spanning data structures and cryptographic puzzles.',
+            highlights: ['1st place — national level', '5 elimination rounds completed', 'Cryptographic & DSA challenges'],
+            skills: ['Problem Solving', 'Data Structures', 'Algorithms', 'Cryptography'],
+            icon: Trophy,
+            color: "bg-lime-400 dark:bg-lime-900"
         },
         {
-            title: '2023',
+            year: '2023',
             company: 'Appleton Innovations',
             event: 'IoT & ML Workshop',
             type: 'workshop',
             duration: 'Jul 2023',
             location: 'Seminar, Visakhapatnam',
-            description: 'Attended a focused workshop on IoT and Machine Learning by Appleton Innovations, gaining practical exposure to sensor networks, edge computing, and intelligent device design. Built small IoT prototypes using Arduino and Raspberry Pi, and integrated basic ML inference models for real-time data classification. Explored communication protocols like MQTT and HTTP in the context of smart device ecosystems.',
-            highlights: ['Arduino & Raspberry Pi prototyping', 'MQTT / HTTP IoT protocols', 'Edge ML inference integration', 'Smart device ecosystem design'],
-            skills: ['IoT', 'Arduino', 'Raspberry Pi', 'MQTT', 'Machine Learning', 'Embedded Systems'],
-            gradient: 'from-blue-600 to-purple-600',
+            description: 'Workshop on IoT and Machine Learning, gaining practical exposure to sensor networks, edge computing, and intelligent device design.',
+            highlights: ['Arduino & Raspberry Pi prototyping', 'MQTT / HTTP IoT protocols', 'Edge ML inference integration'],
+            skills: ['IoT', 'Arduino', 'Raspberry Pi', 'MQTT', 'Machine Learning'],
+            icon: Flame,
+            color: "bg-zinc-100 dark:bg-zinc-900"
         }
     ];
 
-    const data = experiences.map((exp) => ({
-        title: exp.title,
-        content: (
-            <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl hover:scale-[1.01] transition-transform duration-300">
-                {/* Header */}
-                <div className="flex items-start gap-4 mb-5">
-                    <div className={`w-12 h-12 rounded-xl bg-linear-to-br ${exp.gradient} flex items-center justify-center text-white shadow-lg shrink-0`}>
-                        {exp.type === 'internship' ? <Briefcase size={20} /> : exp.type === 'achievement' ? <Trophy size={20} /> : <Flame size={20} />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <h4 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white leading-tight tracking-tight">
-                            {exp.event}
-                        </h4>
-                        <p className="text-slate-500 dark:text-slate-400 font-semibold tracking-wide uppercase text-xs mt-1">
-                            {exp.company}
-                        </p>
-                        {/* Badges */}
-                        <div className="flex flex-wrap gap-2 mt-2">
-                            <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                                📅 {exp.duration}
-                            </span>
-                            <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                                📍 {exp.location}
-                            </span>
-                        </div>
-                    </div>
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            cardsRef.current.forEach((card, i) => {
+                gsap.fromTo(card,
+                    { scale: 0.9, y: 50, opacity: 0.3 },
+                    {
+                        scale: 1 - (i * 0.04),
+                        y: 0,
+                        opacity: 1,
+                        ease: "power3.out",
+                            scrollTrigger: {
+                                trigger: card,
+                                start: "top 90%",
+                                end: "top 20%",
+                                scrub: 0.5,
+                            }
+                    }
+                );
+            });
+        }, container);
+        return () => ctx.revert();
+    }, []);
+
+    return (
+        <section ref={container} id="experience" className={cn(
+            "py-16 md:py-32 px-4 md:px-6 relative transition-colors duration-500",
+            theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-black'
+        )}>
+            {/* Background Kinetic Elements */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+            </div>
+
+            <div className="max-w-5xl mx-auto relative z-10">
+                <div className="mb-12 md:mb-24 text-left">
+                    <h2 className="text-5xl sm:text-7xl md:text-9xl font-black uppercase tracking-tighter mb-4 leading-none">
+                        EXP<span className="text-lime-500">.VOID</span>
+                    </h2>
+                    <p className="font-mono text-zinc-500 uppercase tracking-[0.2em] md:tracking-[0.4em] text-[10px] md:text-xs font-bold">
+                        [ SCROLL TO EXPLORE TIMELINE ]
+                    </p>
                 </div>
 
-                {/* Description */}
-                <p className="text-slate-700 dark:text-slate-300 mb-5 leading-relaxed text-sm md:text-base">
-                    {exp.description}
-                </p>
+                <div className="relative space-y-8 md:space-y-16 pb-40">
+                    {experiences.map((exp, i) => (
+                        <div
+                            key={i}
+                            ref={el => { if (el) cardsRef.current[i] = el }}
+                            className={cn(
+                                "sticky top-20 md:top-28 w-full min-h-[350px] md:min-h-[400px] rounded-[2rem] md:rounded-[3rem] p-6 md:p-14 flex flex-col justify-between shadow-[0_0_50px_rgba(0,0,0,0.5)] border transition-all duration-500",
+                                exp.color,
+                                theme === 'dark' ? 'border-white/5' : 'border-black/5'
+                            )}
+                        >
+                            {/* Year Indicator */}
+                            <div className="absolute top-6 right-8 md:top-8 md:right-12 text-5xl md:text-8xl font-black opacity-10 font-mono tracking-tighter">
+                                '{exp.year.slice(-2)}
+                            </div>
 
-                {/* Highlights */}
-                {exp.highlights && (
-                    <ul className="mb-5 space-y-1.5">
-                        {exp.highlights.map((h: string) => (
-                            <li key={h} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
-                                <span className={`mt-0.5 w-1.5 h-1.5 rounded-full bg-gradient-to-br ${exp.gradient} flex-shrink-0 mt-1.5`} />
-                                {h}
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                            <div className="relative">
+                                <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-10">
+                                    <div className="p-3 md:p-4 rounded-xl md:rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 shadow-inner">
+                                        <exp.icon size={20} className="md:w-7 md:h-7 text-white" />
+                                    </div>
+                                    <div className="px-3 py-1 rounded-full border border-current/20 text-[9px] md:text-[10px] uppercase font-bold tracking-widest bg-current/5">
+                                        {exp.type}
+                                    </div>
+                                </div>
 
-                {/* Skills */}
-                <div className="flex flex-wrap gap-2">
-                    {exp.skills.map((skill: string) => (
-                        <span key={skill} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                            {skill}
-                        </span>
+                                <div className="space-y-3 md:space-y-4">
+                                    <h3 className="text-3xl sm:text-4xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] md:leading-[0.85] flex items-start gap-3">
+                                        {exp.event}
+                                        <ArrowUpRight className="opacity-20 group-hover:opacity-100 transition-opacity hidden sm:block" size={32} />
+                                    </h3>
+                                    <div className="flex flex-wrap gap-x-4 gap-y-2 font-mono text-[10px] md:text-xs uppercase font-black opacity-60">
+                                        <div className="flex items-center gap-1.5 md:gap-2">
+                                            <Calendar size={12} className="text-lime-500" /> {exp.duration}
+                                        </div>
+                                        <div className="flex items-center gap-1.5 md:gap-2">
+                                            <MapPin size={12} className="text-lime-500" /> {exp.location}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 items-end relative">
+                                <div className="space-y-6">
+                                    <p className="text-base md:text-xl font-medium opacity-80 leading-relaxed max-w-md">
+                                        {exp.description}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {exp.skills.map((skill, si) => (
+                                            <span key={si} className="px-3 py-1 rounded-lg border border-current/10 bg-current/5 text-[9px] font-mono uppercase font-black tracking-tighter">
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="text-[10px] font-mono uppercase tracking-[0.3em] opacity-40 font-black">Success Parameters</div>
+                                    <ul className="space-y-3">
+                                        {exp.highlights.map((h, hi) => (
+                                            <li key={hi} className="flex items-center gap-3 text-xs md:text-sm font-bold uppercase leading-none">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-lime-500 shrink-0 shadow-[0_0_10px_#84cc16]" />
+                                                {h}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     ))}
                 </div>
             </div>
-        )
-    }));
-
-    return (
-        <section id="experience" className="relative overflow-hidden">
-            {/* Decorative background */}
-            <div className="absolute inset-0 -z-10">
-                {/* Modern Background for Light Mode */}
-                {theme !== 'dark' && (
-                    <>
-                        <div className="absolute inset-0 bg-slate-50" />
-                        <div className="absolute inset-x-0 top-0 h-[600px] bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.18)_0,transparent_70%)]" />
-                        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-size-[60px_60px] mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_80%,transparent_100%)]" />
-                    </>
-                )}
-                {/* Dark mode */}
-                <div className="absolute inset-0 hidden dark:block bg-linear-to-br from-slate-950 via-slate-900 to-violet-950/30" />
-                <div
-                    className="absolute inset-0 hidden dark:block"
-                    style={{
-                        backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)',
-                        backgroundSize: '60px 60px',
-                        maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 50%, transparent 100%)',
-                        WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 50%, transparent 100%)',
-                    }}
-                />
-                {/* Floating orbs */}
-                <div className={`absolute top-20 right-10 w-72 h-72 ${theme === 'dark' ? 'bg-orange-500/5' : 'bg-orange-400/10'} rounded-full blur-3xl`} />
-                <div className={`absolute bottom-40 left-0 w-96 h-96 ${theme === 'dark' ? 'bg-violet-500/5' : 'bg-violet-400/10'} rounded-full blur-3xl`} />
-            </div>
-            <Timeline data={data} />
         </section>
     );
 };

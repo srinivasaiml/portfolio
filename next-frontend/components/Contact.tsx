@@ -28,7 +28,7 @@ const Contact = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('submitting');
-        
+
         // Use environment variable or fallback to localhost:5000
         const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
         const API_URL = `${BASE_URL.replace(/\/$/, '')}/api/contact`;
@@ -73,7 +73,7 @@ const Contact = () => {
 
     // Calculate dynamic color for the particles based on a dark or light detection, but using CSS classes is easier for the wrapper
     return (
-        <section id="contact" className="relative py-24 bg-violet-500/5 dark:bg-slate-950 transition-colors duration-500 overflow-hidden">
+        <section id="contact" className="relative py-24 bg-white dark:bg-black transition-colors duration-500 overflow-hidden">
             {/* Ambient decorative blurs for Contact section */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
                 <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-[100px] dark:hidden" />
@@ -94,13 +94,13 @@ const Contact = () => {
                         <div className="mb-12">
                             {/* Section Header - Left Aligned */}
                             <div className="relative flex items-center py-6 md:py-10 mb-4 overflow-hidden -ml-2 md:-ml-4">
-                                <span 
+                                <span
                                     className="absolute left-0 text-[5rem] md:text-[7rem] lg:text-[9rem] font-bold text-slate-200/80 dark:text-slate-800/80 select-none z-0 tracking-tighter whitespace-nowrap pointer-events-none"
                                     style={{ fontFamily: "'Brush Script MT', 'Caveat', 'Dancing Script', var(--font-playfair), cursive" }}
                                 >
                                     Contact
                                 </span>
-                                
+
                                 {/* Interactive Particles Header */}
                                 <div className="relative z-10 w-full sm:w-[400px] md:w-[450px] -ml-2">
                                     <CursorDrivenParticleTypography
@@ -136,7 +136,7 @@ const Contact = () => {
                                 <div className="relative flex flex-col items-center">
                                     {/* Indicator Line & Label */}
                                     <div className="absolute bottom-full mb-0 flex flex-col items-center">
-                                        <motion.div 
+                                        <motion.div
                                             initial={{ opacity: 0, y: 10 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.8, duration: 0.5 }}
@@ -144,11 +144,11 @@ const Contact = () => {
                                         >
                                             Location
                                         </motion.div>
-                                        <motion.div 
+                                        <motion.div
                                             initial={{ height: 0 }}
                                             whileInView={{ height: 20 }}
                                             transition={{ delay: 0.4, duration: 0.6 }}
-                                            className="w-px bg-linear-to-b from-slate-900 dark:from-white to-transparent" 
+                                            className="w-px bg-linear-to-b from-slate-900 dark:from-white to-transparent"
                                         />
                                     </div>
                                     {/* Dot on the map */}
@@ -172,7 +172,7 @@ const Contact = () => {
                             <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] dark:bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
 
                             {status === 'success' ? (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     className="relative z-10 flex flex-col items-center justify-center py-12 text-center"
@@ -182,7 +182,7 @@ const Contact = () => {
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Message Sent!</h3>
                                     <p className="text-slate-600 dark:text-slate-400">{responseMessage}</p>
-                                    <button 
+                                    <button
                                         onClick={() => setStatus('idle')}
                                         className="mt-8 text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
                                     >

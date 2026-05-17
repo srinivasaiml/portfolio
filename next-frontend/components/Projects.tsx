@@ -19,24 +19,24 @@ import { HeroParallax } from "./ui/hero-parallax";
 
 const projects: Project[] = [
   {
-  title: "ChatWithAI",
-  description: "AI-powered doctor appointment booking system with intelligent conversation flow.",
-  image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80&w=800",
-  tags: ["React", "AI/ML", "Node.js"],
-  category: "2025",
-  demo: "https://ai-smart-hp.netlify.app", // ✅ UPDATED
-  github: null,
-  featured: true,
-},{
-  title: "Library Management",
-  description: "Comprehensive library management solution built for students and administrators.",
-  image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=800",
-  tags: ["JavaScript", "HTML", "CSS"],
-  category: "2025",
-  demo: "https://adityasmartlibrary.netlify.app", // ✅ UPDATED
-  github: "#",
-  featured: false,
-},
+    title: "ChatWithAI",
+    description: "AI-powered doctor appointment booking system with intelligent conversation flow.",
+    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80&w=800",
+    tags: ["React", "AI/ML", "Node.js"],
+    category: "2025",
+    demo: "https://ai-smart-hp.netlify.app", // ✅ UPDATED
+    github: null,
+    featured: true,
+  }, {
+    title: "Library Management",
+    description: "Comprehensive library management solution built for students and administrators.",
+    image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=800",
+    tags: ["JavaScript", "HTML", "CSS"],
+    category: "2025",
+    demo: "https://adityasmartlibrary.netlify.app", // ✅ UPDATED
+    github: "#",
+    featured: false,
+  },
   {
     title: "AI Excel Assistant",
     description: "Edit, create, and manage Excel files using natural language commands — powered by AI.",

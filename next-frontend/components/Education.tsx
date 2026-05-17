@@ -1,189 +1,108 @@
 "use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, Calendar, Award, BookOpen, TrendingUp, Star } from 'lucide-react';
+import React, { useLayoutEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTheme } from './ThemeProvider';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Education = () => {
     const { theme } = useTheme();
-    const [activeCard, setActiveCard] = useState<number | null>(null);
+    const sectionRef = useRef(null);
+    const itemsRef = useRef<HTMLDivElement[]>([]);
 
     const educationData = [
         {
-            degree: 'B.E in Artificial Intelligence & Machine Learning',
+            title: 'B.E in AI & ML',
             institution: 'Aditya Engineering College',
             period: '2022-2026',
             grade: 'CGPA: 8.0',
-            status: 'Current',
-            description: 'Pursuing Bachelor of Engineering with focus on software development and AI.',
-            highlights: ['Software Development', 'Data Structures', 'Web Technologies', 'AI & ML'],
-            icon: <GraduationCap className="w-6 h-6" />,
-            color: 'from-blue-500 via-indigo-500 to-purple-600',
-            bgGradient: 'from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20'
+            desc: 'Pursuing Bachelor of Engineering with focus on software development and AI.'
         },
         {
-            degree: 'Class 12th',
+            title: 'Class 12th',
             institution: 'State Board',
             period: '2020-2022',
-            grade: 'Score: 899/1000',
-            percentage: '89.9%',
-            status: 'Completed',
-            description: 'Completed higher secondary education with excellent performance in Mathematics, Physics, and Chemistry.',
-            highlights: ['Mathematics', 'Physics', 'Chemistry', 'Top 10% Rank'],
-            icon: <Award className="w-6 h-6" />,
-            color: 'from-emerald-500 via-green-500 to-teal-600',
-            bgGradient: 'from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20'
+            grade: 'Score: 89.9%',
+            desc: 'Completed higher secondary education with excellent performance in Mathematics, Physics, and Chemistry.'
         },
         {
-            degree: 'Class 10th',
+            title: 'Class 10th',
             institution: 'State Board',
             period: '2019-2020',
             grade: 'CGPA: 9.7',
-            status: 'Completed',
-            description: 'Successfully completed secondary education with distinction in all subjects and academic excellence.',
-            highlights: ['Academic Excellence', 'All Subjects Distinction', 'School Topper', 'Perfect Attendance'],
-            icon: <Star className="w-6 h-6" />,
-            color: 'from-purple-500 via-violet-500 to-pink-600',
-            bgGradient: 'from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20'
+            desc: 'Successfully completed secondary education with distinction in all subjects and academic excellence.'
         }
     ];
 
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            itemsRef.current.forEach((item, i) => {
+                gsap.fromTo(item, 
+                    { y: 50, opacity: 0 },
+                    { 
+                        y: 0, 
+                        opacity: 1, 
+                        duration: 1,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: item,
+                            start: "top 90%",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+        }, sectionRef);
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <section
-            id="education"
-            className={`relative min-h-screen py-24 overflow-hidden transition-colors duration-500 ${theme === 'dark'
-                ? 'bg-slate-950'
-                : 'bg-slate-50'
-                }`}
+        <section 
+            ref={sectionRef}
+            id="education" 
+            className={`py-16 md:py-40 px-4 md:px-6 relative transition-colors duration-500 overflow-hidden ${
+                theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-black'
+            }`}
         >
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {/* Modern Background for Light Mode */}
-                {theme !== 'dark' && (
-                    <>
-                        <div className="absolute inset-0 bg-slate-50" />
-                        <div className="absolute inset-x-0 top-0 h-[600px] bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.18)_0,transparent_70%)]" />
-                        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080801a_1px,transparent_1px),linear-gradient(to_bottom,#8080801a_1px,transparent_1px)] bg-size-[60px_60px] mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_80%,transparent_100%)]" />
-                    </>
-                )}
-
-                {/* Animated Orbs for Depth */}
-                <motion.div
-                    animate={{
-                        x: [0, 80, 0],
-                        y: [0, 100, 0],
-                        scale: [1, 1.1, 1],
-                    }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className={`absolute -top-24 -right-24 w-96 h-96 rounded-full blur-[120px] ${theme === 'dark' ? 'bg-indigo-600/10' : 'bg-indigo-100/50'
-                        }`}
-                />
-                <motion.div
-                    animate={{
-                        x: [0, -100, 0],
-                        y: [0, 50, 0],
-                        scale: [1.1, 1, 1.1],
-                    }}
-                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                    className={`absolute bottom-0 -left-24 w-120 h-120 rounded-full blur-[150px] ${theme === 'dark' ? 'bg-purple-600/10' : 'bg-purple-100/40'
-                        }`}
-                />
-            </div>
-
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-20"
-                >
-                    <div className="inline-flex items-center justify-center mb-6">
-                        <div className="p-4 bg-linear-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-2xl shrink-0">
-                            <BookOpen className="w-12 h-12 text-white" />
-                        </div>
-                    </div>
-
-                    <h2 className="text-4xl md:text-7xl font-extrabold mb-6">
-                        <span className="bg-linear-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                            Education Journey
-                        </span>
+            <div className="max-w-5xl mx-auto">
+                <div className="mb-12 md:mb-24">
+                    <h2 className="text-5xl sm:text-7xl md:text-9xl font-black uppercase tracking-tighter mb-4 leading-none">
+                        EDU<span className="text-lime-500">.VOID</span>
                     </h2>
-
-                    <p className="text-base md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                        Charting my path through academic excellence and continuous learning
+                    <p className="font-mono text-zinc-500 uppercase tracking-[0.2em] md:tracking-[0.4em] text-[10px] md:text-xs font-bold">
+                        [ Academic Foundation & Journey ]
                     </p>
-                </motion.div>
-
-                <div className="max-w-6xl mx-auto">
-                    <div className="relative">
-                        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 md:w-1 bg-linear-to-b from-indigo-400 via-purple-400 to-pink-400 transform md:-translate-x-1/2 rounded-full opacity-60"></div>
-
-                        <div className="space-y-16">
-                            {educationData.map((edu, index) => (
-                                <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.6, delay: index * 0.2 }}
-                                    className={`relative flex flex-col md:flex-row items-start md:items-center gap-8 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                                        }`}
-                                >
-                                    <div className="absolute left-0 md:left-1/2 transform -translate-x-1/2 md:-translate-x-1/2 z-20">
-                                        <motion.div
-                                            whileHover={{ scale: 1.2, rotate: 360 }}
-                                            className={`w-12 h-12 md:w-20 md:h-20 bg-linear-to-br ${edu.color} rounded-full flex items-center justify-center text-white shadow-2xl border-4 border-white dark:border-slate-800 transition-transform duration-500 shrink-0`}
-                                        >
-                                            {edu.icon}
-                                        </motion.div>
-                                    </div>
-
-                                    <div
-                                        className={`w-full md:w-5/12 pl-10 md:pl-0 ${index % 2 === 0 ? 'md:mr-auto md:pr-16' : 'md:ml-auto md:pl-16'}`}
-                                        onMouseEnter={() => setActiveCard(index)}
-                                        onMouseLeave={() => setActiveCard(null)}
-                                    >
-                                        <motion.div
-                                            whileHover={{ y: -10, scale: 1.02 }}
-                                            className={`relative bg-linear-to-br ${edu.bgGradient} backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white dark:border-white/10 transition-all duration-300`}
-                                        >
-                                            <div className="mb-4 md:mb-6">
-                                                <h3 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 leading-tight">
-                                                    {edu.degree}
-                                                </h3>
-                                                <p className="text-base md:text-xl font-semibold bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                                    {edu.institution}
-                                                </p>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-4 mb-4">
-                                                <div className="flex items-center gap-2 bg-white/70 dark:bg-black/30 rounded-xl p-2 px-3 shadow-sm border border-white/20 shrink-0">
-                                                    <Calendar className="w-4 h-4 text-indigo-600 shrink-0" />
-                                                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{edu.period}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 bg-white/70 dark:bg-black/30 rounded-xl p-2 px-3 shadow-sm border border-white/20 shrink-0">
-                                                    <TrendingUp className="w-4 h-4 text-green-600 shrink-0" />
-                                                    <span className="text-sm font-bold text-green-700 dark:text-green-400">{edu.grade}</span>
-                                                </div>
-                                            </div>
-
-                                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6 text-sm md:text-base">
-                                                {edu.description}
-                                            </p>
-
-                                            <div className="flex flex-wrap gap-2">
-                                                {edu.highlights.map((highlight, i) => (
-                                                    <span key={i} className="px-3 py-1 bg-white/90 dark:bg-slate-800 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 shadow-sm border border-indigo-100 dark:border-indigo-900/30">
-                                                        {highlight}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </motion.div>
-                                    </div>
-                                </motion.div>
-                            ))}
+                </div>
+                <div className="space-y-20 md:space-y-40">
+                    {educationData.map((s, i) => (
+                        <div 
+                            key={i} 
+                            ref={el => { if (el) itemsRef.current[i] = el }}
+                            className="group relative flex flex-col md:flex-row gap-6 md:gap-20 items-start md:items-end"
+                        >
+                            <div className="text-[12vw] sm:text-[15vw] font-black leading-none opacity-20 group-hover:opacity-100 transition-opacity duration-700">
+                                0{i+1}
+                            </div>
+                            <div className={`pb-8 md:pb-10 border-b flex-1 w-full ${theme === 'dark' ? 'border-white/20' : 'border-black/20'}`}>
+                                <h3 className="text-3xl md:text-6xl font-black uppercase mb-3 md:mb-4 tracking-tighter">
+                                    {s.title}
+                                </h3>
+                                <div className="mb-6 md:mb-8 flex flex-wrap items-center gap-3 md:gap-4 font-mono text-[10px] md:text-base">
+                                    <span className="text-lime-600 dark:text-lime-400 font-bold uppercase tracking-widest">{s.institution}</span>
+                                    <span className="text-zinc-400 dark:text-zinc-600 hidden sm:inline">/</span>
+                                    <span className="uppercase text-zinc-600 dark:text-zinc-400">{s.period}</span>
+                                    <span className="text-zinc-400 dark:text-zinc-600 hidden sm:inline">/</span>
+                                    <span className="text-zinc-600 dark:text-zinc-400 font-bold">{s.grade}</span>
+                                </div>
+                                <p className={`max-w-md font-mono text-xs md:text-base uppercase leading-relaxed ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-500'}`}>
+                                    {s.desc}
+                                </p>
+                            </div>
+                            <div className="hidden md:block w-32 h-32 bg-lime-500 dark:bg-lime-400 rounded-full group-hover:scale-150 transition-transform duration-700 mix-blend-difference shrink-0" />
                         </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </section>

@@ -7,8 +7,9 @@ import {
   AlertTriangle, Inbox, Trash2, TrendingUp, Users, Clock,
   CheckCircle, Filter, Search, RefreshCw,
   MessageSquare, Calendar, ArrowUpRight, ChevronDown, ChevronUp,
-  EyeOff, Key, XCircle, Star, Award
+  EyeOff, Key, XCircle, Star, Award, Command, Activity, Zap
 } from 'lucide-react';
+import { DotGlobeHero } from '@/components/ui/globe-hero';
 
 interface Stats {
   totalVisits: number;
@@ -411,82 +412,75 @@ const AdminPage = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-950 relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            className="absolute -top-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-            animate={{ x: [0, 100, 0], y: [0, 50, 0] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          />
-          <motion.div
-            className="absolute top-40 -right-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-            animate={{ x: [0, -100, 0], y: [0, 100, 0] }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center relative overflow-hidden">
+        <DotGlobeHero 
+          className="absolute inset-0 z-0" 
+          rotationSpeed={0.003} 
+          globeRadius={1.2}
+        />
+        
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(79,70,229,0.1)_0%,transparent_70%)] z-0" />
+        
         <AnimatePresence>
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 w-full max-w-md px-4"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10 w-full max-w-lg px-6"
           >
-            <div className="p-8 bg-slate-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10">
-              <motion.div
-                className="flex flex-col items-center mb-8"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-              >
+            <div className="p-8 md:p-12 bg-slate-900/40 backdrop-blur-3xl rounded-[40px] shadow-[0_0_80px_-15px_rgba(79,70,229,0.3)] border border-white/10">
+              <div className="flex flex-col items-center mb-10 text-center">
                 <motion.div
-                  className="relative mb-6"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                  initial={{ rotate: -20, scale: 0.8 }}
+                  animate={{ rotate: 0, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 100 }}
+                  className="w-20 h-20 bg-linear-to-br from-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl mb-8 group overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur-md opacity-50" />
-                  <Shield className="relative w-20 h-20 text-white" />
+                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                   <Shield className="w-10 h-10 text-white relative z-10" />
                 </motion.div>
-                <h1 className="text-3xl font-bold text-white mb-2">Admin Panel</h1>
-                <p className="text-slate-400">Secure authentication required</p>
-              </motion.div>
+                <h1 className="text-4xl font-black text-white mb-3 tracking-tight">Access Control</h1>
+                <p className="text-slate-400 font-medium text-lg">System credentials required to proceed.</p>
+              </div>
+
               <form onSubmit={handlePasswordSubmit} className="space-y-6">
-                <div className="relative">
-                  <Key className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                  <input
-                    type="password"
-                    value={secretKey}
-                    onChange={(e) => setSecretKey(e.target.value)}
-                    placeholder="Enter secret key"
-                    className="w-full pl-12 pr-5 py-4 bg-slate-800/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-500 text-white"
-                  />
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Authentication Key</label>
+                  <div className="relative group">
+                    <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors w-5 h-5" />
+                    <input
+                      type="password"
+                      value={secretKey}
+                      onChange={(e) => setSecretKey(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full pl-12 pr-6 py-4 bg-black/40 border border-white/5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-white placeholder:text-slate-700"
+                    />
+                  </div>
                 </div>
+
                 <motion.button
-                  whileHover={{ scale: loading ? 1 : 1.02 }}
-                  whileTap={{ scale: loading ? 1 : 0.98 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   disabled={loading}
                   type="submit"
-                  className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full py-4 bg-linear-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all flex items-center justify-center gap-3 disabled:opacity-70"
                 >
                   {loading ? (
-                    <>
-                      <Loader className="w-5 h-5 animate-spin" />
-                      <span>Verifying...</span>
-                    </>
+                    <Loader className="w-5 h-5 animate-spin" />
                   ) : (
                     <>
-                      <LogIn className="w-5 h-5" />
-                      <span>Unlock Dashboard</span>
+                      <Zap className="w-5 h-5 fill-white" />
+                      <span>Initialize Dashboard</span>
                     </>
                   )}
                 </motion.button>
               </form>
+
               {error && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-400 text-sm"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="mt-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-4 text-red-400 text-sm font-semibold"
                 >
                   <AlertTriangle className="w-5 h-5 shrink-0" />
                   <span>{error}</span>
@@ -588,24 +582,30 @@ const AdminPage = () => {
       `}</style>
 
       {/* Header */}
-      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-2 bg-indigo-600 rounded-xl">
+      <header className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border-b border-slate-200/50 dark:border-white/5 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="p-3 bg-linear-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-xl shadow-indigo-500/20">
               <Shield className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h1>
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Vortex Control</h1>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Secure Network Node v4.0</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex flex-col items-right text-right mr-4">
+               <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest animate-pulse">● System Online</p>
+               <p className="text-[9px] text-slate-400 font-medium">Ping: 14ms</p>
+            </div>
             <button
               onClick={fetchDashboardData}
-              className="p-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
+              className="p-3 bg-slate-100 dark:bg-white/5 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-300 transition-all hover:scale-110 active:scale-95"
               title="Refresh Data"
             >
-              {loading ? <Loader className="w-6 h-6 animate-spin" /> : <RefreshCw className="w-6 h-6" />}
+              {loading ? <Loader className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
             </button>
+            <div className="h-8 w-px bg-slate-200 dark:bg-white/10 mx-2" />
             <LogoutButton onClick={handleLogout} />
           </div>
         </div>
@@ -625,23 +625,31 @@ const AdminPage = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
           >
             {[
-              { label: 'New Messages', value: stats.new || (stats.byStatus?.new || 0), icon: Inbox, color: 'blue' },
-              { label: 'Total Messages', value: stats.totalMessages || 0, icon: Mail, color: 'indigo' },
-              { label: 'Total Visits', value: stats.totalVisits || 0, icon: Users, color: 'purple' },
+              { label: 'Unread Intel', value: stats.new || (stats.byStatus?.new || 0), icon: Zap, color: 'from-orange-500 to-amber-500' },
+              { label: 'Total Communications', value: stats.totalMessages || 0, icon: MessageSquare, color: 'from-indigo-600 to-blue-500' },
+              { label: 'System Reach', value: stats.totalVisits || 0, icon: Activity, color: 'from-emerald-500 to-teal-500' },
             ].map((stat, i) => (
               <motion.div
                 key={i}
                 variants={itemVariants}
-                className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 relative overflow-hidden group"
+                whileHover={{ y: -5 }}
+                className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[32px] shadow-2xl border border-white dark:border-white/10 relative overflow-hidden group transition-all duration-300"
               >
                 <div className="relative z-10">
-                  <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2">{stat.label}</p>
-                  <p className="text-4xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`p-2 bg-linear-to-br ${stat.color} rounded-lg shadow-lg`}>
+                       <stat.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <p className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                  </div>
+                  <p className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">
+                    {stat.value.toLocaleString()}
+                  </p>
                 </div>
-                <stat.icon className="absolute right-6 top-1/2 -translate-y-1/2 w-16 h-16 text-slate-200 dark:text-slate-800 group-hover:scale-110 transition-transform duration-500" />
+                <div className={`absolute -right-4 -bottom-4 w-32 h-32 bg-linear-to-br ${stat.color} opacity-[0.03] dark:opacity-[0.07] rotate-12 rounded-full group-hover:scale-125 transition-transform duration-700`} />
               </motion.div>
             ))}
           </motion.div>
@@ -649,23 +657,28 @@ const AdminPage = () => {
 
         {/* Messages List */}
         <div className="bg-white dark:bg-slate-900 rounded-[32px] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-          <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <div className="p-8 md:p-10 border-b border-slate-100 dark:border-white/5 flex flex-col xl:flex-row xl:items-center justify-between gap-8">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Signal Feed</h2>
+              <p className="text-xs font-medium text-slate-500">Monitoring incoming engagement and collaboration requests</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                 <input
                   type="text"
-                  placeholder="Search messages..."
+                  placeholder="Filter signals..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 pr-6 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all w-80"
+                  className="pl-12 pr-6 py-3.5 bg-slate-50/50 dark:bg-black/20 border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-2 focus:ring-indigo-500/50 transition-all w-full md:w-72 text-sm font-medium"
                 />
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`p-3 rounded-2xl border transition-all ${showFilters ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-500 dark:text-slate-400'}`}
+                className={`flex items-center gap-2 px-5 py-3.5 rounded-2xl border transition-all font-bold text-xs uppercase tracking-widest ${showFilters ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/30' : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50'}`}
               >
-                <Filter className="w-5 h-5" />
+                <Filter className="w-4 h-4" />
+                <span>Filters</span>
               </button>
             </div>
             {showFilters && (

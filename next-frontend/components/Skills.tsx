@@ -60,7 +60,7 @@ function SemiCircleOrbit({ radius, centerX, centerY, count, iconSize, startIndex
                 const angle = (index / (count - 1)) * 180;
                 const x = radius * Math.cos((angle * Math.PI) / 180);
                 const y = radius * Math.sin((angle * Math.PI) / 180);
-                
+
                 // Map to our techIcons using startIndex offset to prevent duplicates across rings
                 const globalIndex = startIndex + index;
                 const tech = techIcons[globalIndex % techIcons.length];
@@ -128,14 +128,14 @@ export default function Skills() {
                 : Math.max(80, baseWidth * 0.09);
 
     return (
-        <section 
+        <section
             id="skills"
             className="py-32 relative min-h-screen w-full overflow-hidden bg-white dark:bg-black transition-colors duration-500 border-y border-zinc-100 dark:border-zinc-900"
         >
             <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col items-center">
                 {/* Section Header */}
                 <div className="relative flex justify-center items-center py-10 md:py-20 -mb-4 overflow-hidden pointer-events-none">
-                    <span 
+                    <span
                         className="absolute text-[6rem] md:text-[9rem] lg:text-[13rem] font-bold text-gray-200/80 dark:text-zinc-800/80 select-none z-0 tracking-tighter whitespace-nowrap"
                         style={{ fontFamily: "'Brush Script MT', 'Caveat', 'Dancing Script', var(--font-playfair), cursive" }}
                     >
@@ -159,7 +159,7 @@ export default function Skills() {
                     <SemiCircleOrbit radius={baseWidth * 0.55} centerX={centerX} centerY={centerY} count={11} iconSize={iconSize} startIndex={13} />
                 </div>
             </div>
-            
+
             {/* Background Decorations */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[32px_32px] pointer-events-none" />
             <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-white dark:from-black via-transparent to-white dark:to-black pointer-events-none" />

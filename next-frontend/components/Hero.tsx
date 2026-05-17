@@ -102,7 +102,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={containerRef} id="home" className="relative min-h-screen w-full bg-white dark:bg-[#020202] flex flex-col selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black overflow-hidden transition-colors duration-500">
+    <section ref={containerRef} id="home" className="relative min-h-screen w-full bg-white dark:bg-black flex flex-col selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black overflow-hidden transition-colors duration-500">
       <div className="absolute inset-0 z-0 pointer-events-none opacity-20 dark:opacity-100 transition-opacity duration-500">
         <Canvas camera={{ position: [0, 0, 60], fov: 35 }}>
           <ambientLight intensity={theme === 'light' ? 0.8 : 0.4} />

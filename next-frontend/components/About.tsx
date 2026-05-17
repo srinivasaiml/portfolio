@@ -122,7 +122,7 @@ export default function About() {
             <div className="mx-auto container border border-gray-200 dark:border-gray-800 py-12 border-t-0 px-4">
                 {/* Section Header */}
                 <div className="relative flex justify-center items-center py-10 md:py-20 mb-8 overflow-hidden pointer-events-none">
-                    <span 
+                    <span
                         className="absolute text-[6rem] md:text-[9rem] lg:text-[13rem] font-bold text-gray-200/80 dark:text-zinc-800/80 select-none z-0 tracking-tighter whitespace-nowrap"
                         style={{ fontFamily: "'Brush Script MT', 'Caveat', 'Dancing Script', var(--font-playfair), cursive" }}
                     >
