@@ -328,3 +328,21 @@
     fill: var(--active-color);
   }
 }
+
+/* Lenis Smooth Scroll Configuration */
+html.lenis,
+html.lenis-scrolling {
+  scroll-behavior: auto !important;
+}
+
+html.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}

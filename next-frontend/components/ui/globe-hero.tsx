@@ -11,12 +11,14 @@ interface DotGlobeHeroProps {
     globeRadius?: number;
     className?: string;
     children?: React.ReactNode;
+    globeColor?: string;
 }
 
 const Globe: React.FC<{
     rotationSpeed: number;
     radius: number;
-}> = ({ rotationSpeed, radius }) => {
+    color?: string;
+}> = ({ rotationSpeed, radius, color = "rgba(99, 102, 241, 0.15)" }) => {
     const groupRef = useRef<THREE.Group>(null!);
 
     useFrame(() => {
@@ -32,7 +34,7 @@ const Globe: React.FC<{
             <mesh>
                 <sphereGeometry args={[radius, 64, 64]} />
                 <meshBasicMaterial
-                    color="hsl(var(--foreground))"
+                    color={color}
                     transparent
                     opacity={0.15}
                     wireframe
@@ -47,11 +49,12 @@ const Globe: React.FC<{
 const DotGlobeHero = React.forwardRef<
     HTMLDivElement,
     DotGlobeHeroProps
->(({
+>((({
     rotationSpeed = 0.005,
     globeRadius = 1,
     className,
     children,
+    globeColor,
     ...props
 }, ref) => {
     return (
@@ -76,12 +79,13 @@ const DotGlobeHero = React.forwardRef<
                     <Globe
                         rotationSpeed={rotationSpeed}
                         radius={globeRadius}
+                        color={globeColor}
                     />
                 </Canvas>
             </div>
         </div>
     );
-});
+}));
 
 DotGlobeHero.displayName = "DotGlobeHero";
 

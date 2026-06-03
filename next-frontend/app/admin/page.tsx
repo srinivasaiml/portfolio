@@ -412,14 +412,15 @@ const AdminPage = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center relative overflow-hidden">
+      <div className="fixed inset-0 bg-slate-950 flex items-center justify-center overflow-hidden z-[90]">
         <DotGlobeHero 
           className="absolute inset-0 z-0" 
           rotationSpeed={0.003} 
           globeRadius={1.2}
+          globeColor="rgba(99, 102, 241, 0.18)"
         />
         
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(79,70,229,0.1)_0%,transparent_70%)] z-0" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(79,70,229,0.08)_0%,transparent_70%)] z-0" />
         
         <AnimatePresence>
           <motion.div
@@ -428,7 +429,7 @@ const AdminPage = () => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 w-full max-w-lg px-6"
           >
-            <div className="p-8 md:p-12 bg-slate-900/40 backdrop-blur-3xl rounded-[40px] shadow-[0_0_80px_-15px_rgba(79,70,229,0.3)] border border-white/10">
+            <div className="p-8 md:p-12 bg-slate-900/80 dark:bg-slate-950/85 backdrop-blur-3xl rounded-[40px] shadow-[0_0_80px_-15px_rgba(79,70,229,0.35)] border border-white/10">
               <div className="flex flex-col items-center mb-10 text-center">
                 <motion.div
                   initial={{ rotate: -20, scale: 0.8 }}
@@ -445,15 +446,15 @@ const AdminPage = () => {
 
               <form onSubmit={handlePasswordSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Authentication Key</label>
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Authentication Key</label>
                   <div className="relative group">
-                    <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors w-5 h-5" />
+                    <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-400 transition-colors w-5 h-5" />
                     <input
                       type="password"
                       value={secretKey}
                       onChange={(e) => setSecretKey(e.target.value)}
-                      placeholder="••••••••••••"
-                      className="w-full pl-12 pr-6 py-4 bg-black/40 border border-white/5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-white placeholder:text-slate-700"
+                      placeholder="Enter Admin Key"
+                      className="w-full pl-12 pr-6 py-4 bg-slate-950 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-white placeholder:text-slate-500 font-medium text-base"
                     />
                   </div>
                 </div>

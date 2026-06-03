@@ -35,9 +35,15 @@ const Navbar = () => {
 
   const handleNavClick = (path: string) => {
     if (path.startsWith('#')) {
-      const element = document.getElementById(path.substring(1));
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+      // @ts-ignore
+      if (window.lenis) {
+        // @ts-ignore
+        window.lenis.scrollTo(path, { duration: 1.5 });
+      } else {
+        const element = document.getElementById(path.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     } else {
       router.push(path);
