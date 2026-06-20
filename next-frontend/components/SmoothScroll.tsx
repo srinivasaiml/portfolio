@@ -13,11 +13,10 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
     const lenisRef = useRef<Lenis | null>(null);
 
     useEffect(() => {
-        // ─── iOS UIScrollView deceleration curve ─────────────────────────
-        // Quintic ease-out: blazing fast initial response, extremely long
-        // silky deceleration tail — like flicking a page on an iPhone.
-        const iosEasing = (t: number): number => {
-            return 1 - Math.pow(1 - t, 8); // Extremely pronounced easing for a very slow tail
+        // ─── Smooth easing for scroll momentum ─────────────────────────
+        // Cubic ease-out: responsive and snappy, especially on mobile
+        const smoothEasing = (t: number): number => {
+            return 1 - Math.pow(1 - t, 3); // Moderate easing for snappy response
         };
 
         const lenis = new Lenis({
@@ -25,30 +24,30 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
             autoRaf: false,
 
             // ★ Scroll momentum duration (seconds).
-            // Increased to 6.0s for an extremely slow, luxurious deceleration
-            duration: 6.0,
+            // Reduced to 1.5s for snappy, responsive scrolling (especially on mobile)
+            duration: 1.5,
 
             // ★ The deceleration curve. Only active when `lerp` is NOT set.
-            easing: iosEasing,
+            easing: smoothEasing,
 
             // Smooth wheel scrolling
             smoothWheel: true,
 
             // ★ How far each mouse-wheel notch travels.
-            // Lowered to 0.3 for very minimal distance per physical scroll notch
-            wheelMultiplier: 0.3,
+            // Increased to 1.0 for responsive scroll distance per notch
+            wheelMultiplier: 1.0,
 
             // ★ Enable iOS-style touch momentum on mobile
             syncTouch: true,
 
-            // ★ Touch follow smoothness (lower = dreamier trailing)
-            syncTouchLerp: 0.015,
+            // ★ Touch follow smoothness (higher = snappier response on mobile)
+            syncTouchLerp: 0.075,
 
-            // ★ How long touch momentum carries (lower = longer coast)
-            touchInertiaExponent: 0.7,
+            // ★ How long touch momentum carries (higher = shorter coast)
+            touchInertiaExponent: 1.2,
 
             // ★ Touch scroll speed (higher = more momentum per swipe)
-            touchMultiplier: 1.0,
+            touchMultiplier: 1.2,
 
             // DO NOT set `lerp` — it kills duration-based easing
 
@@ -86,8 +85,8 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
             e.preventDefault();
             lenis.scrollTo(targetEl as HTMLElement, {
                 offset: -80,
-                duration: 2.2,
-                easing: iosEasing,
+                duration: 1.2,
+                easing: smoothEasing,
             });
         };
 
