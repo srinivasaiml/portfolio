@@ -272,7 +272,7 @@ export default function CinematicFooter() {
   }, []);
 
   const scrollToTop = () => {
-    const lenis = (window as Window & { lenis?: { scrollTo: (target: number, opts?: Record<string, unknown>) => void } }).lenis;
+    const lenis = (window as any).lenis;
     if (lenis) {
       lenis.scrollTo(0, { duration: 2.0 });
     } else {

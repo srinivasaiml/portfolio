@@ -59,7 +59,7 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
         });
 
         lenisRef.current = lenis;
-        (window as Window & { lenis?: Lenis }).lenis = lenis;
+        (window as any).lenis = lenis;
 
         // ─── Single RAF source: GSAP ticker → Lenis ─────────────────────
         const onTick = (time: number) => {
@@ -97,7 +97,7 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
             lenis.destroy();
             gsap.ticker.remove(onTick);
             document.removeEventListener('click', handleAnchorClick, { capture: true });
-            (window as Window & { lenis?: Lenis }).lenis = undefined;
+            (window as any).lenis = undefined;
             lenisRef.current = null;
         };
     }, [pathname]);

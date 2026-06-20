@@ -36,7 +36,7 @@ const Navbar = () => {
   const handleNavClick = (path: string, closeMobile = false) => {
     if (closeMobile) setIsOpen(false);
     if (path.startsWith('#')) {
-      const lenis = (window as Window & { lenis?: { scrollTo: (target: string | HTMLElement, opts?: Record<string, unknown>) => void } }).lenis;
+      const lenis = (window as any).lenis;
       if (lenis) {
         // Give mobile drawer time to animate out before scrolling
         const delay = closeMobile ? 120 : 0;
