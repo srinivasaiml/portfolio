@@ -1,64 +1,104 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import { usePathname } from 'next/navigation';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const pathname = usePathname();
+    const lenisRef = useRef<Lenis | null>(null);
 
     useEffect(() => {
+        // ─── iOS UIScrollView deceleration curve ─────────────────────────
+        // Quintic ease-out: blazing fast initial response, extremely long
+        // silky deceleration tail — like flicking a page on an iPhone.
+        const iosEasing = (t: number): number => {
+            return 1 - Math.pow(1 - t, 8); // Extremely pronounced easing for a very slow tail
+        };
+
         const lenis = new Lenis({
-            duration: 1.5,
-            easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)), // Exponential out
+            // ★ CRITICAL: Let GSAP drive the RAF, not Lenis internally
+            autoRaf: false,
+
+            // ★ Scroll momentum duration (seconds).
+            // Increased to 6.0s for an extremely slow, luxurious deceleration
+            duration: 6.0,
+
+            // ★ The deceleration curve. Only active when `lerp` is NOT set.
+            easing: iosEasing,
+
+            // Smooth wheel scrolling
             smoothWheel: true,
-            wheelMultiplier: 1.0,
-            syncTouch: true,         // Enable smooth touch scrolling like iOS momentum
-            syncTouchLerp: 0.08,      // Touch scrolling linear interpolation
-            touchInertiaExponent: 1.2, // Momentum inertia strength (lower = longer glide)
-            touchMultiplier: 1.8,     // Touch scroll speed multiplier
-            lerp: 0.08,               // Global scroll smoothing weight
+
+            // ★ How far each mouse-wheel notch travels.
+            // Lowered to 0.3 for very minimal distance per physical scroll notch
+            wheelMultiplier: 0.3,
+
+            // ★ Enable iOS-style touch momentum on mobile
+            syncTouch: true,
+
+            // ★ Touch follow smoothness (lower = dreamier trailing)
+            syncTouchLerp: 0.015,
+
+            // ★ How long touch momentum carries (lower = longer coast)
+            touchInertiaExponent: 0.7,
+
+            // ★ Touch scroll speed (higher = more momentum per swipe)
+            touchMultiplier: 1.0,
+
+            // DO NOT set `lerp` — it kills duration-based easing
+
+            prevent: (node: Element) => {
+                return node.hasAttribute('data-lenis-prevent') ||
+                    node.closest('[data-lenis-prevent]') !== null;
+            },
         });
 
-        function raf(time: number) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
+        lenisRef.current = lenis;
+        (window as Window & { lenis?: Lenis }).lenis = lenis;
 
-        requestAnimationFrame(raf);
+        // ─── Single RAF source: GSAP ticker → Lenis ─────────────────────
+        const onTick = (time: number) => {
+            lenis.raf(time * 1000);
+        };
+        gsap.ticker.add(onTick);
+        gsap.ticker.lagSmoothing(0);
 
-        // Reset scroll position on route change
+        // Sync ScrollTrigger with Lenis virtual scroll
+        lenis.on('scroll', ScrollTrigger.update);
+
+        // Reset on route change
         lenis.scrollTo(0, { immediate: true });
 
-        // Global intercept for all anchor links starting with '#'
+        // ─── Intercept anchor clicks for smooth scrollTo ─────────────────
         const handleAnchorClick = (e: MouseEvent) => {
-            const target = e.target as HTMLElement;
-            const anchor = target.closest('a');
-            if (anchor) {
-                const href = anchor.getAttribute('href');
-                if (href && href.startsWith('#')) {
-                    e.preventDefault();
-                    const targetEl = document.querySelector(href);
-                    if (targetEl) {
-                        lenis.scrollTo(targetEl as HTMLElement, {
-                            offset: 0,
-                            duration: 1.5,
-                        });
-                    }
-                }
-            }
+            const anchor = (e.target as HTMLElement).closest('a');
+            if (!anchor) return;
+            const href = anchor.getAttribute('href');
+            if (!href?.startsWith('#')) return;
+            const targetEl = document.querySelector(href);
+            if (!targetEl) return;
+
+            e.preventDefault();
+            lenis.scrollTo(targetEl as HTMLElement, {
+                offset: -80,
+                duration: 2.2,
+                easing: iosEasing,
+            });
         };
 
         document.addEventListener('click', handleAnchorClick, { capture: true });
 
-        // @ts-ignore
-        window.lenis = lenis;
-
         return () => {
             lenis.destroy();
+            gsap.ticker.remove(onTick);
             document.removeEventListener('click', handleAnchorClick, { capture: true });
-            // @ts-ignore
-            window.lenis = null;
+            (window as Window & { lenis?: Lenis }).lenis = undefined;
+            lenisRef.current = null;
         };
     }, [pathname]);
 
@@ -66,4 +106,3 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
 };
 
 export default SmoothScroll;
-

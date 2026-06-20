@@ -33,16 +33,24 @@ const Navbar = () => {
     { name: 'Contact', path: '#contact' },
   ];
 
-  const handleNavClick = (path: string) => {
+  const handleNavClick = (path: string, closeMobile = false) => {
+    if (closeMobile) setIsOpen(false);
     if (path.startsWith('#')) {
-      // @ts-ignore
-      if (window.lenis) {
-        // @ts-ignore
-        window.lenis.scrollTo(path, { duration: 1.5 });
+      const lenis = (window as Window & { lenis?: { scrollTo: (target: string | HTMLElement, opts?: Record<string, unknown>) => void } }).lenis;
+      if (lenis) {
+        // Give mobile drawer time to animate out before scrolling
+        const delay = closeMobile ? 120 : 0;
+        setTimeout(() => {
+          lenis.scrollTo(path, {
+            offset: -80,          // clear the fixed navbar
+            duration: 1.4,
+            easing: (t: number) => 1 - Math.pow(1 - t, 3), // iOS cubic ease-out
+          });
+        }, delay);
       } else {
         const element = document.getElementById(path.substring(1));
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }
     } else {
@@ -250,10 +258,7 @@ const Navbar = () => {
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: idx * 0.1 }}
-                    onClick={() => {
-                      handleNavClick(item.path);
-                      setIsOpen(false);
-                    }}
+                    onClick={() => handleNavClick(item.path, true)}
                     className={`text-left px-4 py-3 rounded-2xl text-xl font-semibold transition-all ${activePath === item.path
                       ? 'bg-linear-to-r from-orange-500/10 to-violet-500/10 dark:from-orange-500/20 dark:to-violet-500/20 text-violet-600 dark:text-violet-400'
                       : 'text-foreground/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground'

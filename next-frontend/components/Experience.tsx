@@ -79,12 +79,12 @@ const Experience = () => {
                         y: 0,
                         opacity: 1,
                         ease: "power3.out",
-                            scrollTrigger: {
-                                trigger: card,
-                                start: "top 90%",
-                                end: "top 20%",
-                                scrub: 0.5,
-                            }
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 90%",
+                            end: "top 20%",
+                            scrub: 0.5,
+                        }
                     }
                 );
             });
@@ -105,7 +105,7 @@ const Experience = () => {
             <div className="max-w-5xl mx-auto relative z-10">
                 <div className="mb-12 md:mb-24 text-left">
                     <h2 className="text-5xl sm:text-7xl md:text-9xl font-black uppercase tracking-tighter mb-4 leading-none">
-                        EXP<span className="text-lime-500">.VOID</span>
+                        EXPERIENCE<span className="text-lime-500">.</span>
                     </h2>
                     <p className="font-mono text-zinc-500 uppercase tracking-[0.2em] md:tracking-[0.4em] text-[10px] md:text-xs font-bold">
                         [ SCROLL TO EXPLORE TIMELINE ]

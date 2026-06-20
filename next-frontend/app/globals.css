@@ -157,11 +157,18 @@
     background-image: linear-gradient(to bottom, transparent, oklch(0.95 0.02 260 / 0.1));
     min-height: 100vh;
     overflow-x: clip;
+    /* iOS rubber-band overscroll at top & bottom */
+    overscroll-behavior-y: none;
+    /* GPU-composited layer for buttery paint */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 
   html {
     @apply font-sans;
     overflow-x: clip;
+    /* Prevent browser from fighting Lenis with its own smooth-scroll */
+    scroll-behavior: auto !important;
   }
 }
 
@@ -329,20 +336,57 @@
   }
 }
 
-/* Lenis Smooth Scroll Configuration */
+/* ═══════════════════════════════════════════════════════
+   iOS-style Lenis Smooth Scroll  –  Global CSS
+   ═══════════════════════════════════════════════════════ */
+
+/* Force browsers to skip their own scroll-behavior so Lenis
+   is the ONLY scroll driver. Without this the page can stutter
+   when both engines fire on the same frame. */
 html.lenis,
-html.lenis-scrolling {
+html.lenis body {
   scroll-behavior: auto !important;
 }
 
+/* When Lenis is stopped (e.g. modal open) lock the viewport */
 html.lenis-stopped {
   overflow: hidden;
 }
 
-.lenis-smooth {
-  scroll-behavior: auto !important;
+/* Elements that opt-out of Lenis keep native scroll momentum */
+[data-lenis-prevent] {
+  overscroll-behavior: contain;
+  /* Re-enable native iOS momentum scroll inside these areas */
+  -webkit-overflow-scrolling: touch;
 }
 
-.lenis-smooth [data-lenis-prevent] {
+/* ── Scroll-performance helpers ─────────────────────────────
+   Applied to large animated sections to keep them on the GPU
+   compositor layer – eliminates paint jank during scrolling. */
+.scroll-gpu {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Smooth appear for sections as they scroll into view */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-fade-in.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Inner scrollable containers (code blocks, carousels, etc.)
+   get native momentum so they don't fight Lenis */
+.native-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }

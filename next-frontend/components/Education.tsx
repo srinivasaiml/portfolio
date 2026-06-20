@@ -39,11 +39,11 @@ const Education = () => {
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
             itemsRef.current.forEach((item, i) => {
-                gsap.fromTo(item, 
+                gsap.fromTo(item,
                     { y: 50, opacity: 0 },
-                    { 
-                        y: 0, 
-                        opacity: 1, 
+                    {
+                        y: 0,
+                        opacity: 1,
                         duration: 1,
                         ease: "power3.out",
                         scrollTrigger: {
@@ -59,17 +59,16 @@ const Education = () => {
     }, []);
 
     return (
-        <section 
+        <section
             ref={sectionRef}
-            id="education" 
-            className={`py-16 md:py-40 px-4 md:px-6 relative transition-colors duration-500 overflow-hidden ${
-                theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-black'
-            }`}
+            id="education"
+            className={`py-16 md:py-40 px-4 md:px-6 relative transition-colors duration-500 overflow-hidden ${theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-black'
+                }`}
         >
             <div className="max-w-5xl mx-auto">
                 <div className="mb-12 md:mb-24">
                     <h2 className="text-5xl sm:text-7xl md:text-9xl font-black uppercase tracking-tighter mb-4 leading-none">
-                        EDU<span className="text-lime-500">.VOID</span>
+                        EDUCATION<span className="text-lime-500">.</span>
                     </h2>
                     <p className="font-mono text-zinc-500 uppercase tracking-[0.2em] md:tracking-[0.4em] text-[10px] md:text-xs font-bold">
                         [ Academic Foundation & Journey ]
@@ -77,13 +76,13 @@ const Education = () => {
                 </div>
                 <div className="space-y-20 md:space-y-40">
                     {educationData.map((s, i) => (
-                        <div 
-                            key={i} 
+                        <div
+                            key={i}
                             ref={el => { if (el) itemsRef.current[i] = el }}
                             className="group relative flex flex-col md:flex-row gap-6 md:gap-20 items-start md:items-end"
                         >
                             <div className="text-[12vw] sm:text-[15vw] font-black leading-none opacity-20 group-hover:opacity-100 transition-opacity duration-700">
-                                0{i+1}
+                                0{i + 1}
                             </div>
                             <div className={`pb-8 md:pb-10 border-b flex-1 w-full ${theme === 'dark' ? 'border-white/20' : 'border-black/20'}`}>
                                 <h3 className="text-3xl md:text-6xl font-black uppercase mb-3 md:mb-4 tracking-tighter">
