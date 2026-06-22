@@ -157,8 +157,8 @@
     background-image: linear-gradient(to bottom, transparent, oklch(0.95 0.02 260 / 0.1));
     min-height: 100vh;
     overflow-x: clip;
-    /* iOS rubber-band overscroll at top & bottom */
-    overscroll-behavior-y: none;
+    /* Allow native overscroll (rubber-banding on iOS, bounce stretch on Android) */
+    overscroll-behavior-y: auto;
     /* GPU-composited layer for buttery paint */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);

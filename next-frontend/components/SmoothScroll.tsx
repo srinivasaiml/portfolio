@@ -37,17 +37,9 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
             // Increased to 1.0 for responsive scroll distance per notch
             wheelMultiplier: 1.0,
 
-            // ★ Enable iOS-style touch momentum on mobile
-            syncTouch: true,
-
-            // ★ Touch follow smoothness (higher = snappier response on mobile)
-            syncTouchLerp: 0.075,
-
-            // ★ How long touch momentum carries (higher = shorter coast)
-            touchInertiaExponent: 1.2,
-
-            // ★ Touch scroll speed (higher = more momentum per swipe)
-            touchMultiplier: 1.2,
+            // Disable touch scroll-jacking on mobile/touch screens to allow
+            // native, hardware-accelerated, butter-smooth inertial scrolling.
+            syncTouch: false,
 
             // DO NOT set `lerp` — it kills duration-based easing
 
