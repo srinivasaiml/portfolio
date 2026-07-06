@@ -19,6 +19,26 @@ import { HeroParallax } from "./ui/hero-parallax";
 
 const projects: Project[] = [
   {
+    title: "ResumeAI",
+    description: "AI-powered Resume Builder & ATS Resume Scanner designed to optimize your CV.",
+    image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=800",
+    tags: ["React", "AI/ML", "Tailwind"],
+    category: "2025",
+    demo: "https://ats-resume-flax.vercel.app/",
+    github: null,
+    featured: true,
+  },
+  {
+    title: "VORTEX",
+    description: "Full Stack Luxury E-Commerce Experience with premium interactions and animations.",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=800",
+    tags: ["Next.js", "Motion", "Tailwind"],
+    category: "2025",
+    demo: "https://puffnclub-three.vercel.app/",
+    github: null,
+    featured: true,
+  },
+  {
     title: "ChatWithAI",
     description: "AI-powered doctor appointment booking system with intelligent conversation flow.",
     image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80&w=800",
@@ -120,8 +140,8 @@ const projects: Project[] = [
 ];
 
 const products = [
-  // User's projects (9)
-  ...projects.slice(0, 9).map((p) => ({
+  // User's projects (all 12 now)
+  ...projects.map((p) => ({
     title: p.title,
     link: p.demo || p.github || "#",
     thumbnail: p.image,

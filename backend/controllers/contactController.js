@@ -41,11 +41,19 @@ const createContact = async (req, res) => {
     // Save to database
     const savedContact = await newContact.save();
 
-    // Send the notification email to yourself
-    sendContactNotification(savedContact);
-    
-    // ---> 2. ADD THIS LINE to send the automated reply to the user
-    sendConfirmationEmail(savedContact);
+    // Send emails asynchronously but safely (catch errors so they don't crash the server via unhandledRejection)
+    try {
+      await Promise.all([
+        sendContactNotification(savedContact).catch(err => 
+          console.error('Failed to send contact notification email:', err)
+        ),
+        sendConfirmationEmail(savedContact).catch(err => 
+          console.error('Failed to send auto-reply confirmation email:', err)
+        )
+      ]);
+    } catch (emailError) {
+      console.error('Email service encountered a general error:', emailError);
+    }
 
     res.status(201).json({
       success: true,
