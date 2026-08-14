@@ -159,9 +159,6 @@
     overflow-x: clip;
     /* Allow native overscroll (rubber-banding on iOS, bounce stretch on Android) */
     overscroll-behavior-y: auto;
-    /* GPU-composited layer for buttery paint */
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
   }
 
   html {

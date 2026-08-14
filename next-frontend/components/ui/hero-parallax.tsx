@@ -107,7 +107,7 @@ export const Header = () => {
   return (
     <div className="max-w-7xl relative mx-auto pt-10 md:pt-20 pb-10 px-4 w-full left-0 top-0 flex flex-col items-center">
       <div className="relative flex justify-center items-center py-10 md:py-20 -mb-4 overflow-hidden pointer-events-none w-full">
-        <span 
+        <span
           className="absolute text-[6rem] md:text-[9rem] lg:text-[13rem] font-bold text-gray-200/80 dark:text-zinc-800/80 select-none z-0 tracking-tighter whitespace-nowrap"
           style={{ fontFamily: "'Brush Script MT', 'Caveat', 'Dancing Script', var(--font-playfair), cursive" }}
         >
@@ -118,7 +118,7 @@ export const Header = () => {
         </h2>
       </div>
       <p className="max-w-2xl text-center text-zinc-600 dark:text-zinc-400 text-lg md:text-xl font-medium leading-relaxed mt-4">
-        A hyper-focused showcase of high-fidelity digital solutions, 
+        A hyper-focused showcase of high-fidelity digital solutions,
         where precision engineering meets innovative design.
       </p>
     </div>

@@ -37,8 +37,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}>
         <ThemeProvider>
+          <CustomCursor />
           <SmoothScroll>
-            <CustomCursor />
             <Navbar />
             <main>
               {children}

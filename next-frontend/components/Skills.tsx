@@ -115,17 +115,17 @@ export default function Skills() {
         return () => window.removeEventListener("resize", updateSize);
     }, []);
 
-    const baseWidth = Math.min(size.width * 0.9, 1000); // Increased base width
+    const baseWidth = size.width < 768 
+        ? size.width * 0.9 
+        : size.width < 1440 
+            ? size.width * 0.62 
+            : 900;
     const centerX = baseWidth / 2;
     const centerY = baseWidth * 0.5;
 
-    // Significantly increased icon sizes
-    const iconSize =
-        size.width < 480
-            ? Math.max(50, baseWidth * 0.12)
-            : size.width < 768
-                ? Math.max(64, baseWidth * 0.1)
-                : Math.max(80, baseWidth * 0.09);
+    const iconSize = size.width < 768 
+        ? Math.max(45, baseWidth * 0.11) 
+        : baseWidth * 0.09;
 
     return (
         <section

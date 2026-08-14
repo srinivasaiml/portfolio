@@ -116,10 +116,10 @@ export default function About() {
     return (
         <section
             id="about"
-            className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800"
+            className="bg-white dark:bg-black"
             style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}
         >
-            <div className="mx-auto container border border-gray-200 dark:border-gray-800 py-12 border-t-0 px-4">
+            <div className="mx-auto container py-12 px-4">
                 {/* Section Header */}
                 <div className="relative flex justify-center items-center py-10 md:py-20 mb-8 overflow-hidden pointer-events-none">
                     <span

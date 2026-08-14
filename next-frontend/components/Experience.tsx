@@ -16,6 +16,23 @@ const Experience = () => {
 
     const experiences = [
         {
+            year: '2026',
+            company: 'Amazon',
+            event: 'Transportation Representative – QC',
+            type: 'work',
+            duration: 'Jul 2026 – Present',
+            location: 'Amazon',
+            description: 'Supporting transportation and quality-control operations, reviewing shipment and inventory-related data, identifying discrepancies, and ensuring accurate resolution of operational issues. Working with internal systems and process guidelines to maintain quality and operational accuracy.',
+            highlights: [
+                'Quality validation and discrepancy identification',
+                'Shipment and inventory data analysis',
+                'Accurate issue resolution and process adherence'
+            ],
+            skills: ['Amazon Operations', 'Data Analysis', 'Quality Control', 'Excel', 'Process Management'],
+            icon: Briefcase,
+            color: "bg-orange-600 dark:bg-orange-950"
+        },
+        {
             year: '2025',
             company: 'Aditya University',
             event: 'Software Engineer Intern',
@@ -53,19 +70,6 @@ const Experience = () => {
             skills: ['Problem Solving', 'Data Structures', 'Algorithms', 'Cryptography'],
             icon: Trophy,
             color: "bg-lime-400 dark:bg-lime-900"
-        },
-        {
-            year: '2023',
-            company: 'Appleton Innovations',
-            event: 'IoT & ML Workshop',
-            type: 'workshop',
-            duration: 'Jul 2023',
-            location: 'Seminar, Visakhapatnam',
-            description: 'Workshop on IoT and Machine Learning, gaining practical exposure to sensor networks, edge computing, and intelligent device design.',
-            highlights: ['Arduino & Raspberry Pi prototyping', 'MQTT / HTTP IoT protocols', 'Edge ML inference integration'],
-            skills: ['IoT', 'Arduino', 'Raspberry Pi', 'MQTT', 'Machine Learning'],
-            icon: Flame,
-            color: "bg-zinc-100 dark:bg-zinc-900"
         }
     ];
 
@@ -118,7 +122,7 @@ const Experience = () => {
                             key={i}
                             ref={el => { if (el) cardsRef.current[i] = el }}
                             className={cn(
-                                "sticky top-20 md:top-28 w-full min-h-[350px] md:min-h-[400px] rounded-[2rem] md:rounded-[3rem] p-6 md:p-14 flex flex-col justify-between shadow-[0_0_50px_rgba(0,0,0,0.5)] border transition-all duration-500",
+                                "sticky top-20 md:top-28 w-full min-h-[280px] md:min-h-[320px] rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 flex flex-col justify-between shadow-[0_0_50px_rgba(0,0,0,0.5)] border transition-all duration-500",
                                 exp.color,
                                 theme === 'dark' ? 'border-white/5' : 'border-black/5'
                             )}
@@ -129,7 +133,7 @@ const Experience = () => {
                             </div>
 
                             <div className="relative">
-                                <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-10">
+                                <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
                                     <div className="p-3 md:p-4 rounded-xl md:rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 shadow-inner">
                                         <exp.icon size={20} className="md:w-7 md:h-7 text-white" />
                                     </div>
@@ -138,7 +142,7 @@ const Experience = () => {
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 md:space-y-4">
+                                <div className="space-y-2 md:space-y-3">
                                     <h3 className="text-3xl sm:text-4xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] md:leading-[0.85] flex items-start gap-3">
                                         {exp.event}
                                         <ArrowUpRight className="opacity-20 group-hover:opacity-100 transition-opacity hidden sm:block" size={32} />
@@ -154,7 +158,7 @@ const Experience = () => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 items-end relative">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 items-end relative">
                                 <div className="space-y-6">
                                     <p className="text-base md:text-xl font-medium opacity-80 leading-relaxed max-w-md">
                                         {exp.description}
