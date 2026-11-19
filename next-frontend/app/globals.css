@@ -159,9 +159,6 @@
     overflow-x: clip;
     /* Allow native overscroll (rubber-banding on iOS, bounce stretch on Android) */
     overscroll-behavior-y: auto;
-    /* Keep the viewport on its own compositor layer so scrolling never triggers main-thread paint */
-    will-change: scroll-position;
-    transform: translateZ(0);
   }
 
   /* Thin, non-intrusive scrollbar */
