@@ -1,7 +1,6 @@
 import SectionPage from '@/components/SectionPage';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
-import HomeArtSection from '@/components/HomeArtSection';
 import Education from '@/components/Education';
 import Skills from '@/components/Skills';
 import Experience from '@/components/Experience';

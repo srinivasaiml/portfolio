@@ -81,7 +81,7 @@ const Education = () => {
                             ref={el => { if (el) itemsRef.current[i] = el }}
                             className="group relative flex flex-col md:flex-row gap-6 md:gap-20 items-start md:items-end"
                         >
-                            <div className="text-[12vw] sm:text-[15vw] font-black leading-none opacity-20 group-hover:opacity-100 transition-opacity duration-700">
+                            <div className="text-[12vw] sm:text-[15vw] font-black leading-none opacity-100">
                                 0{i + 1}
                             </div>
                             <div className={`pb-8 md:pb-10 border-b flex-1 w-full ${theme === 'dark' ? 'border-white/20' : 'border-black/20'}`}>
@@ -99,7 +99,7 @@ const Education = () => {
                                     {s.desc}
                                 </p>
                             </div>
-                            <div className="hidden md:block w-32 h-32 bg-lime-500 dark:bg-lime-400 rounded-full group-hover:scale-150 transition-transform duration-700 mix-blend-difference shrink-0" />
+                            <div className="hidden md:block w-32 h-32 bg-lime-500 dark:bg-lime-400 rounded-full shrink-0" />
                         </div>
                     ))}
                 </div>

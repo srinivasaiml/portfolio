@@ -155,18 +155,17 @@ const Experience = () => {
         const ctx = gsap.context(() => {
             cardsRef.current.forEach((card, i) => {
                 gsap.fromTo(card,
-                    { opacity: 0, y: 40, scale: 0.95 },
+                    { scale: 0.9, y: 50, opacity: 0.3 },
                     {
-                        opacity: 1,
+                        scale: 1 - (i * 0.04),
                         y: 0,
-                        scale: 1,
+                        opacity: 1,
                         ease: "power3.out",
-                        duration: 0.8,
-                        delay: i * 0.12,
                         scrollTrigger: {
                             trigger: card,
-                            start: "top 85%",
-                            once: true,
+                            start: "top 90%",
+                            end: "top 20%",
+                            scrub: 0.5,
                         }
                     }
                 );
@@ -201,7 +200,7 @@ const Experience = () => {
                             key={i}
                             ref={el => { if (el) cardsRef.current[i] = el }}
                             className={cn(
-                                "opacity-0 group sticky top-20 md:top-28 w-full rounded-2xl md:rounded-[2.5rem] p-6 md:p-8 lg:p-9 flex flex-col justify-between overflow-hidden border text-white transition-all duration-500 min-h-[420px] md:min-h-[440px]",
+                                "group sticky top-20 md:top-28 w-full rounded-2xl md:rounded-[2.5rem] p-6 md:p-8 lg:p-9 flex flex-col justify-between overflow-hidden border text-white transition-all duration-500 min-h-[420px] md:min-h-[440px]",
                                 exp.cardBg,
                                 exp.borderColor,
                                 exp.shadowColor
