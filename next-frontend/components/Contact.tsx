@@ -29,7 +29,6 @@ const Contact = () => {
         e.preventDefault();
         setStatus('submitting');
 
-        // Use environment variable or fallback to localhost:5000
         const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
         const API_URL = `${BASE_URL.replace(/\/$/, '')}/api/contact`;
 
@@ -63,7 +62,6 @@ const Contact = () => {
             setStatus('error');
             setResponseMessage('Failed to connect to the server. Please check your connection.');
         } finally {
-            // Reset status after a few seconds
             setTimeout(() => {
                 setStatus('idle');
                 setResponseMessage('');
@@ -73,7 +71,7 @@ const Contact = () => {
 
     // Calculate dynamic color for the particles based on a dark or light detection, but using CSS classes is easier for the wrapper
     return (
-        <section id="contact" className="relative py-24 bg-white dark:bg-black transition-colors duration-500 overflow-hidden">
+        <section id="contact" suppressHydrationWarning className="relative py-24 bg-white dark:bg-black transition-colors duration-500 overflow-hidden">
             {/* Ambient decorative blurs for Contact section */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
                 <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-[100px] dark:hidden" />
@@ -86,6 +84,7 @@ const Contact = () => {
 
                     {/* Left Column: Content + World Map */}
                     <motion.div
+                        suppressHydrationWarning
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
@@ -163,6 +162,7 @@ const Contact = () => {
 
                     {/* Right Column: Premium Form Card */}
                     <motion.div
+                        suppressHydrationWarning
                         initial={{ opacity: 0, x: 50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}

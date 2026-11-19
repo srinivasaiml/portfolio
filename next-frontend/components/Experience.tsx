@@ -45,11 +45,11 @@ const Experience = () => {
                 'Process Management'
             ],
             icon: Briefcase,
-            cardBg: "bg-gradient-to-br from-[#ea580c] via-[#c2410c] to-[#9a3412]",
-            borderColor: "border-orange-400/40",
-            shadowColor: "shadow-[0_20px_50px_-10px_rgba(234,88,12,0.45)]",
-            bulletColor: "bg-amber-300 shadow-[0_0_10px_#fde047]",
-            accentIcon: "text-amber-300"
+            cardBg: "bg-gradient-to-br from-[#4f46e5] via-[#4338ca] to-[#1e1b4b]",
+            borderColor: "border-indigo-500/30",
+            shadowColor: "shadow-[0_20px_50px_-10px_rgba(79,70,229,0.35)]",
+            bulletColor: "bg-indigo-400 shadow-[0_0_10px_#818cf8]",
+            accentIcon: "text-indigo-400"
         },
         {
             year: '2025',
@@ -78,11 +78,11 @@ const Experience = () => {
                 'System Architecture'
             ],
             icon: Briefcase,
-            cardBg: "bg-gradient-to-br from-[#4f46e5] via-[#4338ca] to-[#312e81]",
-            borderColor: "border-indigo-400/40",
-            shadowColor: "shadow-[0_20px_50px_-10px_rgba(79,70,229,0.45)]",
-            bulletColor: "bg-cyan-300 shadow-[0_0_10px_#67e8f9]",
-            accentIcon: "text-cyan-300"
+            cardBg: "bg-gradient-to-br from-[#a855f7] via-[#9333ea] to-[#5b21b6]",
+            borderColor: "border-purple-500/30",
+            shadowColor: "shadow-[0_20px_50px_-10px_rgba(168,85,247,0.35)]",
+            bulletColor: "bg-purple-400 shadow-[0_0_10px_#a78bfa]",
+            accentIcon: "text-purple-400"
         },
         {
             year: '2024',
@@ -111,11 +111,11 @@ const Experience = () => {
                 'Vector Embeddings'
             ],
             icon: Flame,
-            cardBg: "bg-gradient-to-br from-[#0284c7] via-[#0369a1] to-[#0c4a6e]",
-            borderColor: "border-sky-400/40",
-            shadowColor: "shadow-[0_20px_50px_-10px_rgba(2,132,199,0.45)]",
-            bulletColor: "bg-teal-300 shadow-[0_0_10px_#5eead4]",
-            accentIcon: "text-teal-300"
+            cardBg: "bg-gradient-to-br from-[#06b6d4] via-[#0891b2] to-[#0c4a6e]",
+            borderColor: "border-cyan-500/30",
+            shadowColor: "shadow-[0_20px_50px_-10px_rgba(6,182,212,0.35)]",
+            bulletColor: "bg-cyan-400 shadow-[0_0_10px_#22d3ee]",
+            accentIcon: "text-cyan-400"
         },
         {
             year: '2023',
@@ -143,11 +143,11 @@ const Experience = () => {
                 'C++ / Python'
             ],
             icon: Trophy,
-            cardBg: "bg-gradient-to-br from-[#059669] via-[#047857] to-[#064e3b]",
-            borderColor: "border-emerald-400/40",
-            shadowColor: "shadow-[0_20px_50px_-10px_rgba(5,150,105,0.45)]",
-            bulletColor: "bg-lime-300 shadow-[0_0_10px_#bef264]",
-            accentIcon: "text-lime-300"
+            cardBg: "bg-gradient-to-br from-[#ec4899] via-[#be185d] to-[#7f1d1d]",
+            borderColor: "border-rose-500/30",
+            shadowColor: "shadow-[0_20px_50px_-10px_rgba(236,72,153,0.35)]",
+            bulletColor: "bg-rose-400 shadow-[0_0_10px_#fb7185]",
+            accentIcon: "text-rose-400"
         }
     ];
 
@@ -155,17 +155,18 @@ const Experience = () => {
         const ctx = gsap.context(() => {
             cardsRef.current.forEach((card, i) => {
                 gsap.fromTo(card,
-                    { scale: 0.9, y: 50, opacity: 0.3 },
+                    { opacity: 0, y: 40, scale: 0.95 },
                     {
-                        scale: 1 - (i * 0.04),
-                        y: 0,
                         opacity: 1,
+                        y: 0,
+                        scale: 1,
                         ease: "power3.out",
+                        duration: 0.8,
+                        delay: i * 0.12,
                         scrollTrigger: {
                             trigger: card,
-                            start: "top 90%",
-                            end: "top 20%",
-                            scrub: 0.5,
+                            start: "top 85%",
+                            once: true,
                         }
                     }
                 );
@@ -200,7 +201,7 @@ const Experience = () => {
                             key={i}
                             ref={el => { if (el) cardsRef.current[i] = el }}
                             className={cn(
-                                "group sticky top-20 md:top-28 w-full rounded-2xl md:rounded-[2.5rem] p-6 md:p-8 lg:p-9 flex flex-col justify-between overflow-hidden border text-white transition-all duration-500 min-h-[420px] md:min-h-[440px]",
+                                "opacity-0 group sticky top-20 md:top-28 w-full rounded-2xl md:rounded-[2.5rem] p-6 md:p-8 lg:p-9 flex flex-col justify-between overflow-hidden border text-white transition-all duration-500 min-h-[420px] md:min-h-[440px]",
                                 exp.cardBg,
                                 exp.borderColor,
                                 exp.shadowColor

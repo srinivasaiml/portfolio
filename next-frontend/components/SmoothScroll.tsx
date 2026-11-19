@@ -13,35 +13,31 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
     const lenisRef = useRef<Lenis | null>(null);
 
     useEffect(() => {
-        // ─── Smooth easing for scroll momentum ─────────────────────────
-        // Cubic ease-out: responsive and snappy, especially on mobile
+        // Gentle cubic ease-out — responsive without being snappy/jerky
         const smoothEasing = (t: number): number => {
-            return 1 - Math.pow(1 - t, 3); // Moderate easing for snappy response
+            return 1 - Math.pow(1 - t, 3);
         };
 
         const lenis = new Lenis({
-            // ★ CRITICAL: Let GSAP drive the RAF, not Lenis internally
+            // Drive the RAF loop from GSAP so Lenis and ScrollTrigger share one clock
             autoRaf: false,
 
-            // ★ Scroll momentum duration (seconds).
-            // Reduced to 1.5s for snappy, responsive scrolling (especially on mobile)
-            duration: 1.5,
+            // Shorter momentum so the page stops quickly instead of coasting too far
+            duration: 1.4,
 
-            // ★ The deceleration curve. Only active when `lerp` is NOT set.
+            // Deceleration curve used when lerp is not set
             easing: smoothEasing,
 
-            // Smooth wheel scrolling
             smoothWheel: true,
 
-            // ★ How far each mouse-wheel notch travels.
-            // Increased to 1.0 for responsive scroll distance per notch
-            wheelMultiplier: 1.0,
+            // Much slower: each mouse-wheel notch travels very little distance
+            wheelMultiplier: 0.25,
 
-            // Disable touch scroll-jacking on mobile/touch screens to allow
-            // native, hardware-accelerated, butter-smooth inertial scrolling.
+            // Much slower trackpad/touch-wheel scroll too
+            touchMultiplier: 0.25,
+
+            // Native hardware-accelerated inertial scroll on mobile
             syncTouch: false,
-
-            // DO NOT set `lerp` — it kills duration-based easing
 
             prevent: (node: Element) => {
                 return node.hasAttribute('data-lenis-prevent') ||
@@ -50,14 +46,15 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
         });
 
         lenisRef.current = lenis;
-        (window as any).lenis = lenis;
+        (window as unknown as Record<string, unknown>).lenis = lenis;
 
-        // ─── Single RAF source: GSAP ticker → Lenis ─────────────────────
+        // Single RAF source: GSAP ticker → Lenis
         const onTick = (time: number) => {
             lenis.raf(time * 1000);
         };
         gsap.ticker.add(onTick);
-        gsap.ticker.lagSmoothing(0);
+        // Keep lag smoothing on so slow frames don't cause stutter/jank
+        gsap.ticker.lagSmoothing(1000, 30);
 
         // Sync ScrollTrigger with Lenis virtual scroll
         lenis.on('scroll', ScrollTrigger.update);
@@ -65,7 +62,7 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
         // Reset on route change
         lenis.scrollTo(0, { immediate: true });
 
-        // ─── Intercept anchor clicks for smooth scrollTo ─────────────────
+        // Intercept anchor clicks for smooth scrollTo
         const handleAnchorClick = (e: MouseEvent) => {
             const anchor = (e.target as HTMLElement).closest('a');
             if (!anchor) return;
@@ -77,7 +74,7 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
             e.preventDefault();
             lenis.scrollTo(targetEl as HTMLElement, {
                 offset: -80,
-                duration: 1.2,
+                duration: 1.4,
                 easing: smoothEasing,
             });
         };
@@ -88,7 +85,7 @@ const SmoothScroll: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
             lenis.destroy();
             gsap.ticker.remove(onTick);
             document.removeEventListener('click', handleAnchorClick, { capture: true });
-            (window as any).lenis = undefined;
+            (window as unknown as Record<string, unknown>).lenis = undefined;
             lenisRef.current = null;
         };
     }, [pathname]);
