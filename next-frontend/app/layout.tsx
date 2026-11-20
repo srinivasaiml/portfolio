@@ -22,9 +22,38 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
 });
 
+
 export const metadata: Metadata = {
-  title: "P. Srinivas | Developer Portfolio",
-  description: "Modern, high-fidelity portfolio of P. Srinivas",
+  title: "Patchipala Srinivas | Full Stack Developer Portfolio",
+  description:
+    "Official portfolio of Patchipala Srinivas, a Full Stack Developer specializing in React, Next.js, Python, Artificial Intelligence and Machine Learning.",
+  applicationName: "Patchipala Srinivas",
+  authors: [{ name: "Patchipala Srinivas" }],
+  creator: "Patchipala Srinivas",
+  publisher: "Patchipala Srinivas",
+  keywords: [
+    "Patchipala Srinivas",
+    "Patchipala Srinivas Portfolio",
+    "Patchipala Srinivas Developer",
+    "Patchipala Srinivas Full Stack Developer",
+    "Srinivas Patchipala",
+    "React Developer",
+    "Next.js Developer",
+    "AI and Machine Learning Developer",
+  ],
+  openGraph: {
+    title: "Patchipala Srinivas | Full Stack Developer Portfolio",
+    description:
+      "Explore the official portfolio of Patchipala Srinivas, showcasing web development, AI and Machine Learning projects.",
+    url: "https://srinivaspatchipala.netlify.app/",
+    siteName: "Patchipala Srinivas",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Patchipala Srinivas | Full Stack Developer",
+    description: "Official developer portfolio of Patchipala Srinivas.",
+  },
 };
 
 export default function RootLayout({
